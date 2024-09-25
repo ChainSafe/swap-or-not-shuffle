@@ -8,8 +8,8 @@ crate-type = ["cdylib"]
 
 [dependencies]
 # Default enable napi4 feature, see https://nodejs.org/api/n-api.html#node-api-version-matrix
-napi = { version = "3.0.0-alpha.12", default-features = false, features = ["napi8", "async"] }
-napi-derive = "3.0.0-alpha.12"
+napi = { version = "2.16.10", default-features = false, features = ["napi8", "async"] }
+napi-derive = "2.12.2"
 ethereum_hashing = "0.6.0"
 ethereum-types = "0.14.1"
 

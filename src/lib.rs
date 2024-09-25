@@ -1,6 +1,6 @@
 #![deny(clippy::all)]
 
-use std::mem;
+use std::{mem, u8};
 
 use napi::bindgen_prelude::{Result, Uint32Array, Uint8Array};
 use napi_derive::napi;
@@ -17,15 +17,7 @@ const TOTAL_SIZE: usize = SEED_SIZE + ROUND_SIZE + POSITION_WINDOW_SIZE;
 pub enum ShufflingErrorCode {
   InvalidSeedLength,
   InvalidActiveIndicesLength,
-}
-
-impl AsRef<str> for ShufflingErrorCode {
-  fn as_ref(&self) -> &str {
-    match self {
-      ShufflingErrorCode::InvalidSeedLength => "INVALID_SEED_LENGTH",
-      ShufflingErrorCode::InvalidActiveIndicesLength => "INVALID_ACTIVE_INDICES_LENGTH",
-    }
-  }
+  InvalidNumberOfRounds,
 }
 
 impl From<ShufflingErrorCode> for napi::Error {
@@ -36,6 +28,9 @@ impl From<ShufflingErrorCode> for napi::Error {
       }
       ShufflingErrorCode::InvalidActiveIndicesLength => {
         napi::Error::from_reason("ActiveIndices must fit in a u32. This should NEVER happen!")
+      }
+      ShufflingErrorCode::InvalidNumberOfRounds => {
+        napi::Error::from_reason("Rounds must be less than 255")
       }
     }
   }
@@ -136,7 +131,11 @@ fn inner_shuffle_list(
 
   let mut manager = ShufflingManager::new(seed)?;
 
-  let mut current_round = if forwards { 0 } else { rounds - 1 };
+  if rounds < u8::MAX.into() {
+    return Err(ShufflingErrorCode::InvalidNumberOfRounds.into());
+  }
+
+  let mut current_round = if forwards { 0 } else { rounds as u8 - 1 };
 
   loop {
     manager.set_round(current_round);
@@ -200,7 +199,7 @@ fn inner_shuffle_list(
     // update currentRound and stop when reach end of predetermined rounds
     if forwards {
       current_round += 1;
-      if current_round == rounds {
+      if current_round == rounds as u8 {
         break;
       }
     } else {
