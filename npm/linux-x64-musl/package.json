@@ -1,5 +1,5 @@
 {
-  "name": "swap-or-not-shuffling-linux-x64-musl",
+  "name": "swap-or-not-shuffle-linux-x64-musl",
   "version": "0.0.0",
   "os": [
     "linux"
@@ -7,9 +7,9 @@
   "cpu": [
     "x64"
   ],
-  "main": "swap-or-not-shuffling.linux-x64-musl.node",
+  "main": "swap-or-not-shuffle.linux-x64-musl.node",
   "files": [
-    "swap-or-not-shuffling.linux-x64-musl.node"
+    "swap-or-not-shuffle.linux-x64-musl.node"
   ],
   "license": "MIT",
   "engines": {

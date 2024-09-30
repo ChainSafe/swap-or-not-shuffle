@@ -1,3 +1,3 @@
-# `swap-or-not-shuffling-win32-x64-msvc`
+# `swap-or-not-shuffle-win32-x64-msvc`
 
-This is the **x86_64-pc-windows-msvc** binary for `swap-or-not-shuffling`
+This is the **x86_64-pc-windows-msvc** binary for `swap-or-not-shuffle`

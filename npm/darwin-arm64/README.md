@@ -1,3 +1,3 @@
-# `swap-or-not-shuffling-darwin-arm64`
+# `swap-or-not-shuffle-darwin-arm64`
 
-This is the **aarch64-apple-darwin** binary for `swap-or-not-shuffling`
+This is the **aarch64-apple-darwin** binary for `swap-or-not-shuffle`

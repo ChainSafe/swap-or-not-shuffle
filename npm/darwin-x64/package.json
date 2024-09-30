@@ -1,5 +1,5 @@
 {
-  "name": "swap-or-not-shuffling-darwin-x64",
+  "name": "swap-or-not-shuffle-darwin-x64",
   "version": "0.0.0",
   "os": [
     "darwin"
@@ -7,9 +7,9 @@
   "cpu": [
     "x64"
   ],
-  "main": "swap-or-not-shuffling.darwin-x64.node",
+  "main": "swap-or-not-shuffle.darwin-x64.node",
   "files": [
-    "swap-or-not-shuffling.darwin-x64.node"
+    "swap-or-not-shuffle.darwin-x64.node"
   ],
   "license": "MIT",
   "engines": {

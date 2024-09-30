@@ -1,6 +1,6 @@
 [package]
 edition = "2021"
-name = "swap-or-not-shuffling"
+name = "swap-or-not-shuffle"
 version = "0.0.0"
 
 [lib]

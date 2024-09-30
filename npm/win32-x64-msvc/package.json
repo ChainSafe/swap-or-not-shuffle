@@ -1,5 +1,5 @@
 {
-  "name": "swap-or-not-shuffling-win32-x64-msvc",
+  "name": "swap-or-not-shuffle-win32-x64-msvc",
   "version": "0.0.0",
   "os": [
     "win32"
@@ -7,9 +7,9 @@
   "cpu": [
     "x64"
   ],
-  "main": "swap-or-not-shuffling.win32-x64-msvc.node",
+  "main": "swap-or-not-shuffle.win32-x64-msvc.node",
   "files": [
-    "swap-or-not-shuffling.win32-x64-msvc.node"
+    "swap-or-not-shuffle.win32-x64-msvc.node"
   ],
   "license": "MIT",
   "engines": {
