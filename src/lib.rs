@@ -8,6 +8,9 @@ use napi_derive::napi;
 use ethereum_hashing::hash_fixed;
 use ethereum_types::H256;
 
+#[napi]
+pub const SHUFFLE_ROUNDS: u32 = 90;
+
 const SEED_SIZE: usize = 32;
 const ROUND_SIZE: usize = 1;
 const POSITION_WINDOW_SIZE: usize = 4;
@@ -124,14 +127,14 @@ fn inner_shuffle_list(
   }
 
   // why must this be usize? length of JS array is u32
-  if list_size > usize::MAX / 2 || list_size < 2_usize.pow(24) {
-    // ensure length of array fits in u32 or will panic
-    return Err(ShufflingErrorCode::InvalidActiveIndicesLength.into());
-  }
+  // if list_size > usize::MAX / 2 || list_size < 2_usize.pow(24) {
+  //   // ensure length of array fits in u32 or will panic
+  //   return Err(ShufflingErrorCode::InvalidActiveIndicesLength.into());
+  // }
 
   let mut manager = ShufflingManager::new(seed)?;
 
-  if rounds < u8::MAX.into() {
+  if rounds > u8::MAX.into() {
     return Err(ShufflingErrorCode::InvalidNumberOfRounds.into());
   }
 
@@ -197,6 +200,7 @@ fn inner_shuffle_list(
     }
 
     // update currentRound and stop when reach end of predetermined rounds
+    // println!("current_round = {}", current_round);
     if forwards {
       current_round += 1;
       if current_round == rounds as u8 {
@@ -208,6 +212,7 @@ fn inner_shuffle_list(
       }
       current_round -= 1;
     }
+    // println!("current_round = {}", current_round);
   }
 
   Ok(input)
