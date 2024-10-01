@@ -66,7 +66,13 @@ describe("util / shuffle", () => {
     expect(Buffer.from(result).toString("hex")).toEqual(expected);
   });
 
-  const testCases: ShuffleTestCase[] = [buildReferenceTestCase(8, 10), buildReferenceTestCase(16, 10)];
+  const testCases: ShuffleTestCase[] = [
+    buildReferenceTestCase(8, 10),
+    buildReferenceTestCase(16, 10),
+    buildReferenceTestCase(16, 100),
+    buildReferenceTestCase(256, 192),
+    buildReferenceTestCase(256, 192),
+  ];
   it.each(testCases)("$id", async ({seed, rounds, input, shuffled, unshuffled}) => {
     const unshuffledResult = unshuffleList(input, seed, rounds);
     const shuffledResult = shuffleList(input, seed, rounds);
