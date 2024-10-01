@@ -1,5 +1,5 @@
 import {digest} from "@chainsafe/as-sha256";
-import {assert, bytesToBigInt} from "@lodestar/utils";
+import {toBigIntLE, toBigIntBE} from "bigint-buffer";
 
 // ArrayLike<number> but with settable indices
 type Shuffleable = {
@@ -8,13 +8,13 @@ type Shuffleable = {
 };
 
 // ShuffleList shuffles a list, using the given seed for randomness. Mutates the input list.
-export function shuffleList(input: Shuffleable, seed: Uint8Array): void {
-  innerShuffleList(input, seed, true);
+export function shuffleList(input: Shuffleable, seed: Uint8Array, rounds: number): void {
+  innerShuffleList(input, seed, rounds, true);
 }
 
 // UnshuffleList undoes a list shuffling using the seed of the shuffling. Mutates the input list.
-export function unshuffleList(input: Shuffleable, seed: Uint8Array): void {
-  innerShuffleList(input, seed, false);
+export function unshuffleList(input: Shuffleable, seed: Uint8Array, rounds: number): void {
+  innerShuffleList(input, seed, rounds, false);
 }
 
 const _SHUFFLE_H_SEED_SIZE = 32;
@@ -73,13 +73,35 @@ function setPositionUint32(value: number, buf: Buffer): void {
   buf[_SHUFFLE_H_PIVOT_VIEW_SIZE + 3] = (value >> 24) & 0xff;
 }
 
+function isEqual<T>(actual: T, expected: T, message: string): void {
+  if (!(actual === expected)) {
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    throw new Error(`${message || "Expected values to be equal"}: ${actual} === ${expected}`);
+  }
+}
+
+function isLte<T>(left: T, right: T, message: string): void {
+  if (!(left <= right)) {
+    throw new Error(`${message || "Expected value to be lte"}: ${left} <= ${right}`);
+  }
+}
+
+function bytesToBigInt(value: Uint8Array, endianness: "le" | "be" = "le"): bigint {
+  if (endianness === "le") {
+    return toBigIntLE(value as Buffer);
+  } else if (endianness === "be") {
+    return toBigIntBE(value as Buffer);
+  }
+  throw new Error("endianness must be either 'le' or 'be'");
+}
+
 // Shuffles or unshuffles, depending on the `dir` (true for shuffling, false for unshuffling
-function innerShuffleList(input: Shuffleable, seed: Uint8Array, dir: boolean): void {
+function innerShuffleList(input: Shuffleable, seed: Uint8Array, rounds: number, dir: boolean): void {
   if (input.length <= 1) {
     // nothing to (un)shuffle
     return;
   }
-  if (SHUFFLE_ROUND_COUNT == 0) {
+  if (rounds == 0) {
     // no shuffling
     return;
   }
@@ -87,16 +109,16 @@ function innerShuffleList(input: Shuffleable, seed: Uint8Array, dir: boolean): v
   // as we do a lot of bit math on it, which cannot be done as fast on more bits.
   const listSize = input.length >>> 0;
   // check if list size fits in uint32
-  assert.equal(listSize, input.length, "input length does not fit uint32");
+  isEqual(listSize, input.length, "input length does not fit uint32");
   // check that the seed is 32 bytes
-  assert.lte(seed.length, _SHUFFLE_H_SEED_SIZE, `seed length is not lte ${_SHUFFLE_H_SEED_SIZE} bytes`);
+  isLte(seed.length, _SHUFFLE_H_SEED_SIZE, `seed length is not lte ${_SHUFFLE_H_SEED_SIZE} bytes`);
 
   const buf = Buffer.alloc(_SHUFFLE_H_TOTAL_SIZE);
   let r = 0;
   if (!dir) {
     // Start at last round.
     // Iterating through the rounds in reverse, un-swaps everything, effectively un-shuffling the list.
-    r = SHUFFLE_ROUND_COUNT - 1;
+    r = rounds - 1;
   }
 
   // Seed is always the first 32 bytes of the hash input, we never have to change this part of the buffer.
@@ -206,7 +228,7 @@ function innerShuffleList(input: Shuffleable, seed: Uint8Array, dir: boolean): v
     if (dir) {
       // -> shuffle
       r += 1;
-      if (r == SHUFFLE_ROUND_COUNT) {
+      if (r == rounds) {
         break;
       }
     } else {

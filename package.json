@@ -11,14 +11,8 @@
     "universal": "napi universal",
     "version": "napi version"
   },
-  "type": "module",
+  "main": "index.js",
   "types": "index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./index.js",
-      "types": "./index.d.ts"
-    }
-  },
   "napi": {
     "name": "swap-or-not-shuffle",
     "triples": {
@@ -35,11 +29,11 @@
   "devDependencies": {
     "@chainsafe/as-sha256": "^0.5.0",
     "@jest/globals": "^29.7.0",
-    "@lodestar/utils": "^1.22.0",
     "@napi-rs/cli": "^2.18.4",
     "@types/node": "^22.4.1",
     "@typescript-eslint/eslint-plugin": "^7.15.0",
     "@typescript-eslint/parser": "^7.15.0",
+    "bigint-buffer": "^1.1.5",
     "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jest": "^28.8.3",
