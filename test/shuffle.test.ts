@@ -65,11 +65,15 @@ describe("shuffle", () => {
     expect(() => unshuffleList(test.input, test.seed, 256)).toThrow("Rounds must be between 0 and 255");
   });
 
-  it("should throw for invalid input array length", () => {
-    const test = buildReferenceTestCase(10, 10);
-    const input = Uint32Array.from(Buffer.alloc(2 ** 32, 0xac));
-    expect(() => unshuffleList(input, test.seed, 100)).toThrow("ActiveIndices must fit in a u32");
-  });
+  /**
+   * Leave this test commented for github runners.  It fails on memory allocations. Leave in test suite
+   * to confirm that it does work though (local tests if you want to verify)
+   */
+  // it("should throw for invalid input array length", () => {
+  //   const test = buildReferenceTestCase(10, 10);
+  //   const input = Uint32Array.from(Buffer.alloc(2 ** 32, 0xac));
+  //   expect(() => unshuffleList(input, test.seed, 100)).toThrow("ActiveIndices must fit in a u32");
+  // });
 
   it("should match spec test results", () => {
     const seed = "0x4fe91d85d6bc19b20413659c61f3c690a1c4d48be41cab8363a130cebabada97";
