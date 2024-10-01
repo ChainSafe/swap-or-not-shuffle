@@ -30,10 +30,10 @@ impl From<ShufflingErrorCode> for napi::Error {
         napi::Error::from_reason("Shuffling seed must be 32 bytes long")
       }
       ShufflingErrorCode::InvalidActiveIndicesLength => {
-        napi::Error::from_reason("ActiveIndices must fit in a u32. This should NEVER happen!")
+        napi::Error::from_reason("ActiveIndices must fit in a u32")
       }
       ShufflingErrorCode::InvalidNumberOfRounds => {
-        napi::Error::from_reason("Rounds must be less than 255")
+        napi::Error::from_reason("Rounds must be between 0 and 255")
       }
     }
   }
@@ -111,7 +111,7 @@ impl ShufflingManager {
 fn inner_shuffle_list(
   mut input: Vec<u32>,
   seed: &[u8],
-  rounds: u32,
+  rounds: i32,
   forwards: bool,
 ) -> Result<Vec<u32>> {
   if rounds == 0 {
@@ -126,15 +126,16 @@ fn inner_shuffle_list(
     return Ok(input);
   }
 
-  // why must this be usize? length of JS array is u32
-  // if list_size > usize::MAX / 2 || list_size < 2_usize.pow(24) {
-  //   // ensure length of array fits in u32 or will panic
-  //   return Err(ShufflingErrorCode::InvalidActiveIndicesLength.into());
-  // }
+  // ensure length of array fits in u32 or will panic
+  if list_size > u32::MAX as usize {
+    // TODO: (@matthewkeil) found this in the rust implementation but not sure why...
+    // || list_size < 2_usize.pow(24)
+    return Err(ShufflingErrorCode::InvalidActiveIndicesLength.into());
+  }
 
   let mut manager = ShufflingManager::new(seed)?;
 
-  if rounds > u8::MAX.into() {
+  if rounds < u8::MIN.into() || rounds > u8::MAX.into() {
     return Err(ShufflingErrorCode::InvalidNumberOfRounds.into());
   }
 
@@ -222,7 +223,7 @@ fn inner_shuffle_list(
 pub fn shuffle_list(
   active_indices: Uint32Array,
   seed: Uint8Array,
-  rounds: u32,
+  rounds: i32,
 ) -> Result<Uint32Array> {
   Ok(Uint32Array::new(inner_shuffle_list(
     active_indices.to_vec(),
@@ -236,7 +237,7 @@ pub fn shuffle_list(
 pub async fn async_shuffle_list(
   active_indices: Uint32Array,
   seed: Uint8Array,
-  rounds: u32,
+  rounds: i32,
 ) -> Result<Uint32Array> {
   Ok(Uint32Array::new(inner_shuffle_list(
     active_indices.to_vec(),
@@ -250,7 +251,7 @@ pub async fn async_shuffle_list(
 pub fn unshuffle_list(
   active_indices: Uint32Array,
   seed: Uint8Array,
-  rounds: u32,
+  rounds: i32,
 ) -> Result<Uint32Array> {
   Ok(Uint32Array::new(inner_shuffle_list(
     active_indices.to_vec(),
@@ -264,7 +265,7 @@ pub fn unshuffle_list(
 pub async fn async_unshuffle_list(
   active_indices: Uint32Array,
   seed: Uint8Array,
-  rounds: u32,
+  rounds: i32,
 ) -> Result<Uint32Array> {
   Ok(Uint32Array::new(inner_shuffle_list(
     active_indices.to_vec(),
