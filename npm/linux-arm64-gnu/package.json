@@ -1,6 +1,6 @@
 {
   "name": "@chainsafe/swap-or-not-shuffle-linux-arm64-gnu",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "os": [
     "linux"
   ],
