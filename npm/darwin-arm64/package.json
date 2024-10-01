@@ -1,5 +1,5 @@
 {
-  "name": "swap-or-not-shuffle-darwin-arm64",
+  "name": "@chainsafe/swap-or-not-shuffle-darwin-arm64",
   "version": "0.0.1",
   "os": [
     "darwin"

@@ -1,5 +1,5 @@
 {
-  "name": "swap-or-not-shuffle",
+  "name": "@chainsafe/swap-or-not-shuffle",
   "version": "0.0.1",
   "scripts": {
     "artifacts": "napi artifacts",
