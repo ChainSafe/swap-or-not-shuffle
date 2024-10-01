@@ -12,10 +12,27 @@
     "swap-or-not-shuffle.linux-arm64-gnu.node"
   ],
   "license": "MIT",
-  "engines": {
-    "node": ">= 10"
-  },
   "libc": [
     "glibc"
-  ]
+  ],
+  "engines": {
+    "node": ">= 18"
+  },
+  "keywords": [
+    "ethereum",
+    "eth2",
+    "consensus-spec",
+    "swap-or-not-shuffle",
+    "swap-or-not",
+    "shuffling",
+    "shuffle",
+    "napi-rs",
+    "rust",
+    "lodestar",
+    "ChainSafe"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ChainSafe/swap-or-not-shuffle"
+  }
 }

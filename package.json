@@ -45,10 +45,24 @@
     "ts-node": "^9.1.1",
     "typescript": "^5.5.3"
   },
-  "ava": {
-    "timeout": "3m"
-  },
   "engines": {
-    "node": ">= 10"
+    "node": ">= 18"
+  },
+  "keywords": [
+    "ethereum",
+    "eth2",
+    "consensus-spec",
+    "swap-or-not-shuffle",
+    "swap-or-not",
+    "shuffling",
+    "shuffle",
+    "napi-rs",
+    "rust",
+    "lodestar",
+    "ChainSafe"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ChainSafe/swap-or-not-shuffle"
   }
 }
