@@ -188,11 +188,12 @@ jobs:
         run: git diff --exit-code
       - name: Test bindings
         run: yarn test:unit
-      - name: Perf test bindings
-        run: yarn test:perf
-        if: ${{ matrix.node }} == '22.4.1'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # TODO: (@matthewkeil) need to figure out how to get these to post to the PR body
+      # - name: Perf test bindings
+      #   run: yarn test:perf
+      #   if: ${{ matrix.node == '22.4.1' }} 
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test-linux-x64-musl-binding:
     name: Test - x86_64-unknown-linux-musl - node@${{ matrix.node }}
