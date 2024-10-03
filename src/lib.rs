@@ -9,7 +9,10 @@ use ethereum_hashing::hash_fixed;
 use ethereum_types::H256;
 
 #[napi]
-pub const SHUFFLE_ROUNDS: u32 = 90;
+pub const SHUFFLE_ROUNDS_MINIMAL: u32 = 10;
+
+#[napi]
+pub const SHUFFLE_ROUNDS_MAINNET: u32 = 90;
 
 const SEED_SIZE: usize = 32;
 const ROUND_SIZE: usize = 1;

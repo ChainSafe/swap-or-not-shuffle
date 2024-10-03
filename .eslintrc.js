@@ -15,7 +15,7 @@ module.exports = {
     project: "./tsconfig.json",
     sourceType: "script",
   },
-  plugins: ["@typescript-eslint", "eslint-plugin-import", "eslint-plugin-node", "prettier", "jest"],
+  plugins: ["@typescript-eslint", "eslint-plugin-import", "eslint-plugin-node", "prettier"],
   extends: [
     "eslint:recommended",
     "plugin:import/errors",
