@@ -150,7 +150,8 @@ jobs:
         run: ls -R .
         shell: bash
       - name: Test bindings
-        run: yarn test
+        run: yarn test:unit
+
   test-linux-x64-gnu-binding:
     name: Test - Linux-x64-gnu - node@${{ matrix.node }}
     needs:
@@ -160,7 +161,7 @@ jobs:
       matrix:
         node:
           - '18'
-          - '22.4.x'
+          - '22.4.1'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -186,7 +187,13 @@ jobs:
       - name: Ensure there are no unstaged changes
         run: git diff --exit-code
       - name: Test bindings
-        run: yarn test
+        run: yarn test:unit
+      # TODO: (@matthewkeil) need to figure out how to get these to post to the PR body
+      # - name: Perf test bindings
+      #   run: yarn test:perf
+      #   if: ${{ matrix.node == '22.4.1' }} 
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test-linux-x64-musl-binding:
     name: Test - x86_64-unknown-linux-musl - node@${{ matrix.node }}
@@ -225,7 +232,7 @@ jobs:
           options: '--platform linux/amd64 -v ${{ github.workspace }}:/build -w /build'
           run: |
             set -e
-            yarn test
+            yarn test:unit
             ls -la
 
   test-linux-aarch64-gnu-binding:
@@ -266,7 +273,7 @@ jobs:
           options: '--platform linux/arm64 -v ${{ github.workspace }}:/build -w /build'
           run: |
             set -e
-            yarn test
+            yarn test:unit
             ls -la
 
   test-linux-aarch64-musl-binding:
@@ -307,7 +314,7 @@ jobs:
           options: '--platform linux/arm64 -v ${{ github.workspace }}:/build -w /build'
           run: |
             set -e
-            yarn test
+            yarn test:unit
             ls -la
 
   publish:

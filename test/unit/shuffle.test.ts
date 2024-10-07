@@ -1,7 +1,7 @@
+import {expect} from "chai";
 import {randomBytes} from "node:crypto";
-import {expect, describe, it} from "@jest/globals";
-import * as referenceImplementation from "./referenceImplementation";
-import {shuffleList, asyncShuffleList, unshuffleList, asyncUnshuffleList} from "../index";
+import * as referenceImplementation from "../referenceImplementation";
+import {shuffleList, asyncShuffleList, unshuffleList, asyncUnshuffleList} from "../../index";
 
 interface ShuffleTestCase {
   id: string;
@@ -54,15 +54,15 @@ describe("shuffle", () => {
   it("should throw for invalid seed", () => {
     const test = buildReferenceTestCase(10, 10);
     let invalidSeed = Buffer.alloc(31, 0xac);
-    expect(() => unshuffleList(test.input, invalidSeed, test.rounds)).toThrow("Shuffling seed must be 32 bytes long");
+    expect(() => unshuffleList(test.input, invalidSeed, test.rounds)).to.throw("Shuffling seed must be 32 bytes long");
     invalidSeed = Buffer.alloc(33, 0xac);
-    expect(() => unshuffleList(test.input, invalidSeed, test.rounds)).toThrow("Shuffling seed must be 32 bytes long");
+    expect(() => unshuffleList(test.input, invalidSeed, test.rounds)).to.throw("Shuffling seed must be 32 bytes long");
   });
 
   it("should throw for invalid number of rounds", () => {
     const test = buildReferenceTestCase(10, 10);
-    expect(() => unshuffleList(test.input, test.seed, -1)).toThrow("Rounds must be between 0 and 255");
-    expect(() => unshuffleList(test.input, test.seed, 256)).toThrow("Rounds must be between 0 and 255");
+    expect(() => unshuffleList(test.input, test.seed, -1)).to.throw("Rounds must be between 0 and 255");
+    expect(() => unshuffleList(test.input, test.seed, 256)).to.throw("Rounds must be between 0 and 255");
   });
 
   /**
@@ -72,7 +72,7 @@ describe("shuffle", () => {
   // it("should throw for invalid input array length", () => {
   //   const test = buildReferenceTestCase(10, 10);
   //   const input = Uint32Array.from(Buffer.alloc(2 ** 32, 0xac));
-  //   expect(() => unshuffleList(input, test.seed, 100)).toThrow("ActiveIndices must fit in a u32");
+  //   expect(() => unshuffleList(input, test.seed, 100)).to.throw("ActiveIndices must fit in a u32");
   // });
 
   it("should match spec test results", () => {
@@ -87,7 +87,7 @@ describe("shuffle", () => {
 
     const result = unshuffleList(getInputArray(100), fromHex(seed), rounds);
 
-    expect(Buffer.from(result).toString("hex")).toEqual(expected);
+    expect(Buffer.from(result).toString("hex")).to.equal(expected);
   });
 
   const testCases: ShuffleTestCase[] = [
@@ -98,16 +98,18 @@ describe("shuffle", () => {
     buildReferenceTestCase(256, 192),
   ];
 
-  it.each(testCases)("sync - $id", ({seed, rounds, input, shuffled, unshuffled}) => {
-    const unshuffledResult = unshuffleList(input, seed, rounds);
-    const shuffledResult = shuffleList(input, seed, rounds);
-    expect(Buffer.from(shuffledResult).toString("hex")).toEqual(shuffled);
-    expect(Buffer.from(unshuffledResult).toString("hex")).toEqual(unshuffled);
-  });
-  it.each(testCases)("async - $id", async ({seed, rounds, input, shuffled, unshuffled}) => {
-    const unshuffledResult = await asyncUnshuffleList(input, seed, rounds);
-    const shuffledResult = await asyncShuffleList(input, seed, rounds);
-    expect(Buffer.from(shuffledResult).toString("hex")).toEqual(shuffled);
-    expect(Buffer.from(unshuffledResult).toString("hex")).toEqual(unshuffled);
-  });
+  for (const {id, seed, rounds, input, shuffled, unshuffled} of testCases) {
+    it(`sync - ${id}`, () => {
+      const unshuffledResult = unshuffleList(input, seed, rounds);
+      const shuffledResult = shuffleList(input, seed, rounds);
+      expect(Buffer.from(shuffledResult).toString("hex")).to.equal(shuffled);
+      expect(Buffer.from(unshuffledResult).toString("hex")).to.equal(unshuffled);
+    });
+    it(`async - ${id}`, async () => {
+      const unshuffledResult = await asyncUnshuffleList(input, seed, rounds);
+      const shuffledResult = await asyncShuffleList(input, seed, rounds);
+      expect(Buffer.from(shuffledResult).toString("hex")).to.equal(shuffled);
+      expect(Buffer.from(unshuffledResult).toString("hex")).to.equal(unshuffled);
+    });
+  }
 });
