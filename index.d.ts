@@ -6,6 +6,6 @@
 export const SHUFFLE_ROUNDS_MINIMAL: number
 export const SHUFFLE_ROUNDS_MAINNET: number
 export declare function shuffleList(activeIndices: Uint32Array, seed: Uint8Array, rounds: number): Uint32Array
-export declare function asyncShuffleList(activeIndices: Uint32Array, seed: Uint8Array, rounds: number): Promise<Uint32Array>
 export declare function unshuffleList(activeIndices: Uint32Array, seed: Uint8Array, rounds: number): Uint32Array
+export declare function asyncShuffleList(activeIndices: Uint32Array, seed: Uint8Array, rounds: number): Promise<Uint32Array>
 export declare function asyncUnshuffleList(activeIndices: Uint32Array, seed: Uint8Array, rounds: number): Promise<Uint32Array>
