@@ -1,8 +1,11 @@
 #![deny(clippy::all)]
 
-use std::{mem, u8};
+use std::mem;
 
-use napi::bindgen_prelude::{Result, Uint32Array, Uint8Array};
+use napi::{
+  bindgen_prelude::{AsyncTask, Result, Uint32Array, Uint8Array},
+  Env, Task,
+};
 use napi_derive::napi;
 
 use ethereum_hashing::hash_fixed;
@@ -112,11 +115,12 @@ impl ShufflingManager {
 ///  - `list_size > 2**24`
 ///  - `list_size > usize::MAX / 2`
 fn inner_shuffle_list(
-  mut input: Vec<u32>,
+  input: &Uint32Array,
   seed: &[u8],
   rounds: i32,
   forwards: bool,
 ) -> Result<Vec<u32>> {
+  let mut input = input.to_vec();
   if rounds == 0 {
     // no shuffling rounds
     return Ok(input);
@@ -229,21 +233,7 @@ pub fn shuffle_list(
   rounds: i32,
 ) -> Result<Uint32Array> {
   Ok(Uint32Array::new(inner_shuffle_list(
-    active_indices.to_vec(),
-    &seed,
-    rounds,
-    true,
-  )?))
-}
-
-#[napi]
-pub async fn async_shuffle_list(
-  active_indices: Uint32Array,
-  seed: Uint8Array,
-  rounds: i32,
-) -> Result<Uint32Array> {
-  Ok(Uint32Array::new(inner_shuffle_list(
-    active_indices.to_vec(),
+    &active_indices,
     &seed,
     rounds,
     true,
@@ -257,23 +247,63 @@ pub fn unshuffle_list(
   rounds: i32,
 ) -> Result<Uint32Array> {
   Ok(Uint32Array::new(inner_shuffle_list(
-    active_indices.to_vec(),
+    &active_indices,
     &seed,
     rounds,
     false,
   )?))
 }
 
+pub struct AsyncInnerShuffle {
+  input: Uint32Array,
+  seed: Vec<u8>,
+  rounds: i32,
+  forwards: bool,
+}
+
 #[napi]
-pub async fn async_unshuffle_list(
+impl Task for AsyncInnerShuffle {
+  type Output = Vec<u32>;
+  type JsValue = Uint32Array;
+
+  fn compute(&mut self) -> Result<Self::Output> {
+    Ok(inner_shuffle_list(
+      &self.input,
+      &self.seed,
+      self.rounds,
+      self.forwards,
+    )?)
+  }
+
+  fn resolve(&mut self, _: Env, output: Self::Output) -> Result<Self::JsValue> {
+    Ok(Uint32Array::new(output))
+  }
+}
+
+#[napi]
+pub fn async_shuffle_list(
   active_indices: Uint32Array,
   seed: Uint8Array,
   rounds: i32,
-) -> Result<Uint32Array> {
-  Ok(Uint32Array::new(inner_shuffle_list(
-    active_indices.to_vec(),
-    &seed,
+) -> AsyncTask<AsyncInnerShuffle> {
+  AsyncTask::new(AsyncInnerShuffle {
+    input: active_indices,
+    seed: seed.to_vec(),
     rounds,
-    false,
-  )?))
+    forwards: true,
+  })
+}
+
+#[napi]
+pub fn async_unshuffle_list(
+  active_indices: Uint32Array,
+  seed: Uint8Array,
+  rounds: i32,
+) -> AsyncTask<AsyncInnerShuffle> {
+  AsyncTask::new(AsyncInnerShuffle {
+    input: active_indices,
+    seed: seed.to_vec(),
+    rounds,
+    forwards: false,
+  })
 }
