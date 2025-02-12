@@ -9,3 +9,8 @@ export declare function shuffleList(activeIndices: Uint32Array, seed: Uint8Array
 export declare function unshuffleList(activeIndices: Uint32Array, seed: Uint8Array, rounds: number): Uint32Array
 export declare function asyncShuffleList(activeIndices: Uint32Array, seed: Uint8Array, rounds: number): Promise<Uint32Array>
 export declare function asyncUnshuffleList(activeIndices: Uint32Array, seed: Uint8Array, rounds: number): Promise<Uint32Array>
+export declare function computeProposerIndexElectra(effectiveBalanceIncrements: Uint16Array, indices: Uint32Array, seed: Uint8Array, maxEffectiveBalanceElectra: number, effectiveBalanceIncrement: number, rounds: number): number
+export declare class ComputeShuffledIndex {
+  constructor(seed: Uint8Array, indexCount: number, rounds: number)
+  get(index: number): number
+}

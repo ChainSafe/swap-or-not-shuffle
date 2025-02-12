@@ -310,7 +310,7 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { SHUFFLE_ROUNDS_MINIMAL, SHUFFLE_ROUNDS_MAINNET, shuffleList, unshuffleList, asyncShuffleList, asyncUnshuffleList } = nativeBinding
+const { SHUFFLE_ROUNDS_MINIMAL, SHUFFLE_ROUNDS_MAINNET, shuffleList, unshuffleList, asyncShuffleList, asyncUnshuffleList, ComputeShuffledIndex, computeProposerIndexElectra } = nativeBinding
 
 module.exports.SHUFFLE_ROUNDS_MINIMAL = SHUFFLE_ROUNDS_MINIMAL
 module.exports.SHUFFLE_ROUNDS_MAINNET = SHUFFLE_ROUNDS_MAINNET
@@ -318,3 +318,5 @@ module.exports.shuffleList = shuffleList
 module.exports.unshuffleList = unshuffleList
 module.exports.asyncShuffleList = asyncShuffleList
 module.exports.asyncUnshuffleList = asyncUnshuffleList
+module.exports.ComputeShuffledIndex = ComputeShuffledIndex
+module.exports.computeProposerIndexElectra = computeProposerIndexElectra
