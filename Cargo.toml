@@ -11,7 +11,7 @@ crate-type = ["cdylib"]
 napi = { version = "3.0.0-alpha.28", default-features = false, features = ["napi8", "async"] }
 napi-derive = "3.0.0-alpha.26"
 ethereum_hashing = "0.7.0"
-ethereum-types = "0.14.1"
+ethereum-types = "0.15.1"
 
 [build-dependencies]
 napi-build = "2.1.4"
