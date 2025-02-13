@@ -40,6 +40,9 @@
     "typescript": "^5.5.3",
     "vitest": "^3.0.5"
   },
+  "resolutions": {
+    "rollup": "npm:@rollup/wasm-node@*"
+  },
   "engines": {
     "node": ">= 18"
   },
