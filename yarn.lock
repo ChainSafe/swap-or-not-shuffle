@@ -290,6 +290,31 @@
     yaml "^2.7.0"
     yargs "^17.7.2"
 
+"@chainsafe/swap-or-not-shuffle-darwin-arm64@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@chainsafe/swap-or-not-shuffle-darwin-arm64/-/swap-or-not-shuffle-darwin-arm64-0.0.2.tgz#9c4b02970619b9ec5274f357f3a03ff97e745957"
+  integrity sha512-e2tmpSgGTHFv1g3oEKP/YElDTmxZwuSwVQ+Cf0gTUA8z4YQsJar61293My6JeA7qC5razWjhvcEk13ZbTCqk0w==
+
+"@chainsafe/swap-or-not-shuffle-linux-arm64-gnu@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@chainsafe/swap-or-not-shuffle-linux-arm64-gnu/-/swap-or-not-shuffle-linux-arm64-gnu-0.0.2.tgz#a881c6e29704bbbaceb8b75fd9394832087979f3"
+  integrity sha512-nGTIRUXt1QRNiWQXZnA8IWiHnAw6FNkU7RkngkoDzjD8pEhrtWs8tv/pdOxRKEhw21HBvKi7z8J+a7/MtxDLTg==
+
+"@chainsafe/swap-or-not-shuffle-linux-arm64-musl@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@chainsafe/swap-or-not-shuffle-linux-arm64-musl/-/swap-or-not-shuffle-linux-arm64-musl-0.0.2.tgz#118f80f7bd7e8f83fb566112a17003f228d86593"
+  integrity sha512-sumwkxQ0Mky+W66Jf43cHUybgHQ4FENj2iRBRw3jGWiZ79Vv/DZ1dMA6I4/LVWCsvZmFUIvMvKNthGHXefh2DQ==
+
+"@chainsafe/swap-or-not-shuffle-linux-x64-musl@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@chainsafe/swap-or-not-shuffle-linux-x64-musl/-/swap-or-not-shuffle-linux-x64-musl-0.0.2.tgz#75025eee02e2b34f10852c1de57b8e0050584320"
+  integrity sha512-ClwDMZd768PIaAUQhbyZpqqip0b6Sgjt8IpP5ACYMJr2AHoiG64POZaiFu+zusT4q3s4/dvqaz86jRQaF4vFkw==
+
+"@chainsafe/swap-or-not-shuffle-win32-arm64-msvc@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@chainsafe/swap-or-not-shuffle-win32-arm64-msvc/-/swap-or-not-shuffle-win32-arm64-msvc-0.0.2.tgz#f5520df2bf72e823ef225d9f13d317b91b6372e4"
+  integrity sha512-i9+qj0VSppy2xMChQE38rCmWmmy8SJ0uSaApc0L4KZ+t2aqquYyEUXWGgfdXMZx9MqAUvuigzv34T9qivADFag==
+
 "@colors/colors@1.5.0":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@colors/colors/-/colors-1.5.0.tgz#bb504579c1cae923e6576a4f5da43d25f97bdbd9"
