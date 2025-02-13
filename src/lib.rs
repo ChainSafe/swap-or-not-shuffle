@@ -115,12 +115,11 @@ impl ShufflingManager {
 ///  - `list_size > 2**24`
 ///  - `list_size > usize::MAX / 2`
 fn inner_shuffle_list(
-  input: &Uint32Array,
+  mut input: Vec<u32>,
   seed: &[u8],
   rounds: i32,
   forwards: bool,
 ) -> Result<Vec<u32>> {
-  let mut input = input.to_vec();
   if rounds == 0 {
     // no shuffling rounds
     return Ok(input);
@@ -233,7 +232,7 @@ pub fn shuffle_list(
   rounds: i32,
 ) -> Result<Uint32Array> {
   Ok(Uint32Array::new(inner_shuffle_list(
-    &active_indices,
+    active_indices.to_vec(),
     &seed,
     rounds,
     true,
@@ -247,7 +246,7 @@ pub fn unshuffle_list(
   rounds: i32,
 ) -> Result<Uint32Array> {
   Ok(Uint32Array::new(inner_shuffle_list(
-    &active_indices,
+    active_indices.to_vec(),
     &seed,
     rounds,
     false,
@@ -268,7 +267,7 @@ impl Task for AsyncInnerShuffle {
 
   fn compute(&mut self) -> Result<Self::Output> {
     Ok(inner_shuffle_list(
-      &self.input,
+      self.input.to_vec(),
       &self.seed,
       self.rounds,
       self.forwards,
@@ -388,16 +387,59 @@ impl ComputeShuffledIndex {
 #[napi]
 pub fn compute_proposer_index_electra(
   effective_balance_increments: &[u16],
-  indices: &[u32],
+  active_indices: &[u32],
   seed: &[u8],
   max_effective_balance_electra: u32,
   effective_balance_increment: u32,
   rounds: u32,
 ) -> u32 {
+  get_committee_indices_electra(
+    1,
+    seed,
+    active_indices,
+    effective_balance_increments,
+    max_effective_balance_electra,
+    effective_balance_increment,
+    rounds,
+  )[0]
+}
+
+#[napi]
+pub fn compute_sync_committee_indices_electra(
+  sync_committee_size: u32,
+  seed: &[u8],
+  active_indices: &[u32],
+  effective_balance_increments: &[u16],
+  max_effective_balance_electra: u32,
+  effective_balance_increment: u32,
+  rounds: u32,
+) -> Uint32Array {
+  get_committee_indices_electra(
+    sync_committee_size,
+    seed,
+    active_indices,
+    effective_balance_increments,
+    max_effective_balance_electra,
+    effective_balance_increment,
+    rounds,
+  ).into()
+}
+
+pub fn get_committee_indices_electra(
+  committee_size: u32,
+  seed: &[u8],
+  active_indices: &[u32],
+  effective_balance_increments: &[u16],
+  max_effective_balance_electra: u32,
+  effective_balance_increment: u32,
+  rounds: u32,
+) -> Vec<u32> {
+  let mut committee_indices = Vec::with_capacity(committee_size as usize);
   let max_random_value = 0xffff;
   let max_effective_balance_increment = max_effective_balance_electra / effective_balance_increment;
 
-  let mut compute_shuffled_index = ComputeShuffledIndex::new(seed, indices.len() as u32, rounds);
+  let mut compute_shuffled_index =
+    ComputeShuffledIndex::new(seed, active_indices.len() as u32, rounds);
   let mut shuffled_result = HashMap::new();
 
   let mut i: u32 = 0;
@@ -405,12 +447,12 @@ pub fn compute_proposer_index_electra(
   cached_hash_input[0..32].copy_from_slice(seed);
   let mut cached_hash = [0u8; 32];
 
-  loop {
-    let index = i % indices.len() as u32;
+  while (committee_indices.len() as u32) < committee_size {
+    let index = i % active_indices.len() as u32;
     let shuffled_index = *shuffled_result
       .entry(index)
       .or_insert_with(|| compute_shuffled_index.get(index));
-    let candidate_index = indices[shuffled_index as usize];
+    let candidate_index = active_indices[shuffled_index as usize];
 
     if i % 16 == 0 {
       cached_hash_input[32..36].copy_from_slice(&(i / 16).to_le_bytes());
@@ -427,9 +469,10 @@ pub fn compute_proposer_index_electra(
     if effective_balance_increment * max_random_value
       >= max_effective_balance_increment * random_value
     {
-      return candidate_index;
+      committee_indices.push(candidate_index);
     }
 
     i += 1;
   }
+  committee_indices
 }
