@@ -177,7 +177,7 @@ jobs:
         run: ls -R .
         shell: bash
       - name: Test bindings
-        run: docker run --rm -v $(pwd):/build -w /build node:${{ matrix.node }}-slim yarn run test:unit
+        run: docker run --rm -v $(pwd):/build -w /build node:${{ matrix.node }}-slim corepack enable && yarn run test:unit
   test-linux-x64-musl-binding:
     name: Test bindings on x86_64-unknown-linux-musl - node@${{ matrix.node }}
     needs:
@@ -209,7 +209,7 @@ jobs:
         run: ls -R .
         shell: bash
       - name: Test bindings
-        run: docker run --rm -v $(pwd):/build -w /build node:${{ matrix.node }}-alpine yarn run test:unit
+        run: docker run --rm -v $(pwd):/build -w /build node:${{ matrix.node }}-alpine corepack enable && yarn run test:unit
   test-linux-aarch64-gnu-binding:
     name: Test bindings on aarch64-unknown-linux-gnu - node@${{ matrix.node }}
     needs:
@@ -245,7 +245,7 @@ jobs:
         with:
           image: node:${{ matrix.node }}-slim
           options: '--platform linux/arm64 -v ${{ github.workspace }}:/build -w /build'
-          run: yarn run test:unit
+          run: corepack enable && yarn run test:unit
   test-linux-aarch64-musl-binding:
     name: Test bindings on aarch64-unknown-linux-musl - node@${{ matrix.node }}
     needs:
@@ -282,7 +282,7 @@ jobs:
         with:
           image: node:${{ matrix.node }}-alpine
           options: '--platform linux/arm64 -v ${{ github.workspace }}:/build -w /build'
-          run: yarn run test:unit
+          run: corepack enable && yarn run test:unit
   publish:
     name: Publish
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
