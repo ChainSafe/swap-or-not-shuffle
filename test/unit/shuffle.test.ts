@@ -1,5 +1,5 @@
-import {expect} from "chai";
 import {randomBytes} from "node:crypto";
+import {expect, describe, it} from "vitest";
 import * as referenceImplementation from "../referenceImplementation";
 import {shuffleList, asyncShuffleList, unshuffleList, asyncUnshuffleList} from "../../index";
 

@@ -1,18 +1,17 @@
 import {randomBytes} from "node:crypto";
-import {expect} from "chai";
-
-import {computeProposerIndexElectra} from "../../index.js";
-
-describe("computeProposerIndex", () => {
-
-  it("should compute the same index as reference implementation", async () => {
-const {
+import {describe, it, expect} from "vitest";
+import {
   EFFECTIVE_BALANCE_INCREMENT,
   ForkSeq,
   MAX_EFFECTIVE_BALANCE_ELECTRA,
   SHUFFLE_ROUND_COUNT,
-} = await import("@lodestar/params");
-const {computeProposerIndex} = await import("@lodestar/state-transition");
+} from "@lodestar/params";
+import {computeProposerIndex} from "@lodestar/state-transition";
+
+import {computeProposerIndexElectra} from "../../index.js";
+
+describe("computeProposerIndex", () => {
+  it("should compute the same index as reference implementation", async () => {
     const seed = randomBytes(32);
     const vc = 1000;
     const activeIndices = new Uint32Array(Array.from({length: vc}, (_, i) => i));
