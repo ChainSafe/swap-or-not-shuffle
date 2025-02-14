@@ -202,6 +202,7 @@ jobs:
           cache: yarn
       - name: Install dependencies
         run: |
+          yarn set version berry
           yarn config set supportedArchitectures.libc "musl"
           yarn install
       - name: Download artifacts
@@ -236,6 +237,7 @@ jobs:
         shell: bash
       - name: Install dependencies
         run: |
+          yarn set version berry
           yarn config set supportedArchitectures.cpu "arm64"
           yarn config set supportedArchitectures.libc "glibc"
           yarn install
@@ -273,6 +275,7 @@ jobs:
         shell: bash
       - name: Install dependencies
         run: |
+          yarn set version berry
           yarn config set supportedArchitectures.cpu "arm64"
           yarn config set supportedArchitectures.libc "musl"
           yarn install
