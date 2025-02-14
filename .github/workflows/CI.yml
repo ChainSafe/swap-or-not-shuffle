@@ -84,6 +84,7 @@ jobs:
         shell: bash
       - name: Install dependencies
         run: |
+          corepack enable
           yarn set version 4.6.0
           yarn install
       - name: Build
@@ -134,6 +135,7 @@ jobs:
           architecture: ${{ matrix.settings.architecture }}
       - name: Install dependencies
         run: |
+          corepack enable
           yarn set version 4.6.0
           yarn install
       - name: Download artifacts
