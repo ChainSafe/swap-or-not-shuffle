@@ -46,6 +46,7 @@ jobs:
     runs-on: ${{ matrix.settings.host }}
     steps:
       - uses: actions/checkout@v4
+      - run: corepack enable
       - name: Setup node
         uses: actions/setup-node@v4
         with:
@@ -82,18 +83,8 @@ jobs:
         run: ${{ matrix.settings.setup }}
         if: ${{ matrix.settings.setup }}
         shell: bash
-      - name: Setup node x86
-        if: matrix.settings.target == 'i686-pc-windows-msvc'
-        run: yarn config set supportedArchitectures.cpu "ia32"
-        shell: bash
       - name: Install dependencies
         run: yarn install
-      - name: Setup node x86
-        uses: actions/setup-node@v4
-        if: matrix.settings.target == 'i686-pc-windows-msvc'
-        with:
-          node-version: 22
-          architecture: x86
       - name: Build
         run: ${{ matrix.settings.build }}
         shell: bash
@@ -134,6 +125,7 @@ jobs:
     runs-on: ${{ matrix.settings.host }}
     steps:
       - uses: actions/checkout@v4
+      - run: corepack enable
       - name: Setup node
         uses: actions/setup-node@v4
         with:
@@ -165,6 +157,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - run: corepack enable
       - name: Setup node
         uses: actions/setup-node@v4
         with:
@@ -195,6 +188,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - run: corepack enable
       - name: Setup node
         uses: actions/setup-node@v4
         with:
@@ -299,6 +293,7 @@ jobs:
       - test-linux-aarch64-musl-binding
     steps:
       - uses: actions/checkout@v4
+      - run: corepack enable
       - name: Setup node
         uses: actions/setup-node@v4
         with:
