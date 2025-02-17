@@ -29,7 +29,6 @@ const isFileMusl = (f) => f.includes('libc.musl-') || f.includes('ld-musl-')
 
 const isMuslFromFilesystem = () => {
   try {
-    console.log(readFileSync('/usr/bin/ldd', 'utf-8'))
     return readFileSync('/usr/bin/ldd', 'utf-8').includes('musl')
   } catch {
     return null
@@ -42,7 +41,6 @@ const isMuslFromReport = () => {
     return null
   }
   if (report.header && report.header.glibcVersionRuntime) {
-    console.log(report.header)
     return false
   }
   if (Array.isArray(report.sharedObjects)) {
@@ -50,13 +48,11 @@ const isMuslFromReport = () => {
       return true
     }
   }
-  console.log(report)
   return false
 }
 
 const isMuslFromChildProcess = () => {
   try {
-    console.log(require('child_process').execSync('ldd --version', { encoding: 'utf8' }))
     return require('child_process').execSync('ldd --version', { encoding: 'utf8' }).includes('musl')
   } catch (e) {
     // If we reach this case, we don't know if the system is musl or not, so is better to just fallback to false
@@ -364,7 +360,6 @@ if (!nativeBinding) {
     //  - The package owner could build/publish bindings for this arch
     //  - The user may need to bundle the correct files
     //  - The user may need to re-install node_modules to get new packages
-    console.log('Failed to load native bindings:', loadErrors)
     throw new Error('Failed to load native binding', { cause: loadErrors })
   }
   throw new Error(`Failed to load native binding`)
