@@ -641,6 +641,7 @@ __metadata:
     "@chainsafe/swap-or-not-shuffle-win32-arm64-msvc": "npm:0.0.2"
     "@lodestar/params": "npm:^1.27.0"
     "@lodestar/state-transition": "npm:^1.27.0"
+    "@lodestar/utils": "npm:^1.27.0"
     "@napi-rs/cli": "npm:^3.0.0-alpha.70"
     "@types/node": "npm:^22.13.2"
     bigint-buffer: "npm:^1.1.5"

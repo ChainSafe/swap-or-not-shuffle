@@ -36,6 +36,7 @@
     "@chainsafe/benchmark": "^1.2.3",
     "@lodestar/params": "^1.27.0",
     "@lodestar/state-transition": "^1.27.0",
+    "@lodestar/utils": "^1.27.0",
     "@napi-rs/cli": "^3.0.0-alpha.70",
     "@types/node": "^22.13.2",
     "bigint-buffer": "^1.1.5",
