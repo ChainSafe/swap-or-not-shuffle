@@ -29,6 +29,7 @@ const isFileMusl = (f) => f.includes('libc.musl-') || f.includes('ld-musl-')
 
 const isMuslFromFilesystem = () => {
   try {
+    console.log(readFileSync('/usr/bin/ldd', 'utf-8'))
     return readFileSync('/usr/bin/ldd', 'utf-8').includes('musl')
   } catch {
     return null
@@ -41,6 +42,7 @@ const isMuslFromReport = () => {
     return null
   }
   if (report.header && report.header.glibcVersionRuntime) {
+    console.log(report.header)
     return false
   }
   if (Array.isArray(report.sharedObjects)) {
@@ -48,11 +50,13 @@ const isMuslFromReport = () => {
       return true
     }
   }
+  console.log(report)
   return false
 }
 
 const isMuslFromChildProcess = () => {
   try {
+    console.log(require('child_process').execSync('ldd --version', { encoding: 'utf8' }))
     return require('child_process').execSync('ldd --version', { encoding: 'utf8' }).includes('musl')
   } catch (e) {
     // If we reach this case, we don't know if the system is musl or not, so is better to just fallback to false
