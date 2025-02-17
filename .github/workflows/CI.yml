@@ -284,7 +284,7 @@ jobs:
         with:
           image: node:${{ matrix.node }}-alpine
           options: '--platform linux/arm64 -v ${{ github.workspace }}:/build -w /build'
-          run: corepack enable && yarn run test:unit
+          run: corepack enable && yarn install && yarn run test:unit
   publish:
     name: Publish
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
