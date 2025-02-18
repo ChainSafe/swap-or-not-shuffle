@@ -523,50 +523,74 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainsafe/pubkey-index-map-darwin-arm64@npm:2.0.0":
-  version: 2.0.0
-  resolution: "@chainsafe/pubkey-index-map-darwin-arm64@npm:2.0.0"
+"@chainsafe/pubkey-index-map-darwin-arm64@npm:3.0.0":
+  version: 3.0.0
+  resolution: "@chainsafe/pubkey-index-map-darwin-arm64@npm:3.0.0"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@chainsafe/pubkey-index-map-darwin-x64@npm:2.0.0":
-  version: 2.0.0
-  resolution: "@chainsafe/pubkey-index-map-darwin-x64@npm:2.0.0"
+"@chainsafe/pubkey-index-map-darwin-x64@npm:3.0.0":
+  version: 3.0.0
+  resolution: "@chainsafe/pubkey-index-map-darwin-x64@npm:3.0.0"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@chainsafe/pubkey-index-map-linux-arm64-gnu@npm:2.0.0":
-  version: 2.0.0
-  resolution: "@chainsafe/pubkey-index-map-linux-arm64-gnu@npm:2.0.0"
+"@chainsafe/pubkey-index-map-linux-arm64-gnu@npm:3.0.0":
+  version: 3.0.0
+  resolution: "@chainsafe/pubkey-index-map-linux-arm64-gnu@npm:3.0.0"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@chainsafe/pubkey-index-map-linux-x64-gnu@npm:2.0.0":
-  version: 2.0.0
-  resolution: "@chainsafe/pubkey-index-map-linux-x64-gnu@npm:2.0.0"
+"@chainsafe/pubkey-index-map-linux-arm64-musl@npm:3.0.0":
+  version: 3.0.0
+  resolution: "@chainsafe/pubkey-index-map-linux-arm64-musl@npm:3.0.0"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@chainsafe/pubkey-index-map-linux-x64-gnu@npm:3.0.0":
+  version: 3.0.0
+  resolution: "@chainsafe/pubkey-index-map-linux-x64-gnu@npm:3.0.0"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@chainsafe/pubkey-index-map-win32-x64-msvc@npm:2.0.0":
-  version: 2.0.0
-  resolution: "@chainsafe/pubkey-index-map-win32-x64-msvc@npm:2.0.0"
+"@chainsafe/pubkey-index-map-linux-x64-musl@npm:3.0.0":
+  version: 3.0.0
+  resolution: "@chainsafe/pubkey-index-map-linux-x64-musl@npm:3.0.0"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@chainsafe/pubkey-index-map-win32-arm64-msvc@npm:3.0.0":
+  version: 3.0.0
+  resolution: "@chainsafe/pubkey-index-map-win32-arm64-msvc@npm:3.0.0"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@chainsafe/pubkey-index-map-win32-x64-msvc@npm:3.0.0":
+  version: 3.0.0
+  resolution: "@chainsafe/pubkey-index-map-win32-x64-msvc@npm:3.0.0"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"@chainsafe/pubkey-index-map@npm:2.0.0":
-  version: 2.0.0
-  resolution: "@chainsafe/pubkey-index-map@npm:2.0.0"
+"@chainsafe/pubkey-index-map@npm:@chainsafe/pubkey-index-map@3.0.0":
+  version: 3.0.0
+  resolution: "@chainsafe/pubkey-index-map@npm:3.0.0"
   dependencies:
-    "@chainsafe/pubkey-index-map-darwin-arm64": "npm:2.0.0"
-    "@chainsafe/pubkey-index-map-darwin-x64": "npm:2.0.0"
-    "@chainsafe/pubkey-index-map-linux-arm64-gnu": "npm:2.0.0"
-    "@chainsafe/pubkey-index-map-linux-x64-gnu": "npm:2.0.0"
-    "@chainsafe/pubkey-index-map-win32-x64-msvc": "npm:2.0.0"
+    "@chainsafe/pubkey-index-map-darwin-arm64": "npm:3.0.0"
+    "@chainsafe/pubkey-index-map-darwin-x64": "npm:3.0.0"
+    "@chainsafe/pubkey-index-map-linux-arm64-gnu": "npm:3.0.0"
+    "@chainsafe/pubkey-index-map-linux-arm64-musl": "npm:3.0.0"
+    "@chainsafe/pubkey-index-map-linux-x64-gnu": "npm:3.0.0"
+    "@chainsafe/pubkey-index-map-linux-x64-musl": "npm:3.0.0"
+    "@chainsafe/pubkey-index-map-win32-arm64-msvc": "npm:3.0.0"
+    "@chainsafe/pubkey-index-map-win32-x64-msvc": "npm:3.0.0"
   dependenciesMeta:
     "@chainsafe/pubkey-index-map-darwin-arm64":
       optional: true
@@ -574,11 +598,17 @@ __metadata:
       optional: true
     "@chainsafe/pubkey-index-map-linux-arm64-gnu":
       optional: true
+    "@chainsafe/pubkey-index-map-linux-arm64-musl":
+      optional: true
     "@chainsafe/pubkey-index-map-linux-x64-gnu":
+      optional: true
+    "@chainsafe/pubkey-index-map-linux-x64-musl":
+      optional: true
+    "@chainsafe/pubkey-index-map-win32-arm64-msvc":
       optional: true
     "@chainsafe/pubkey-index-map-win32-x64-msvc":
       optional: true
-  checksum: 10c0/b2f276c32e8f326640cab2001ceaaa1a92d86a3d4231a9bdfa350767f43c0e26e1c983796232ddf37d0a6e65787b07d8f736116a06f5fecb767a29e8aa5120f9
+  checksum: 10c0/ad3b83f3686b1ab0320931d2a79b895741f11ec6c4aa8ee9a36b9552087440e8eae43f71279fc21ddb198be39994d3ef59a8eee0a4c3be79d14b5aa147af1585
   languageName: node
   linkType: hard
 

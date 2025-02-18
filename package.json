@@ -46,6 +46,7 @@
     "vitest": "^3.0.5"
   },
   "resolutions": {
+    "@chainsafe/pubkey-index-map": "npm:@chainsafe/pubkey-index-map@3.0.0",
     "rollup": "npm:@rollup/wasm-node@*"
   },
   "engines": {
