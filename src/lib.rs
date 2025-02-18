@@ -422,7 +422,8 @@ pub fn compute_sync_committee_indices_electra(
     max_effective_balance_electra,
     effective_balance_increment,
     rounds,
-  ).into()
+  )
+  .into()
 }
 
 pub fn get_committee_indices_electra(
