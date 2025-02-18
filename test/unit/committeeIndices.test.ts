@@ -12,7 +12,6 @@ import {computeProposerIndex} from "@lodestar/state-transition";
 import {computeProposerIndexElectra, computeSyncCommitteeIndicesElectra} from "../../index.js";
 import { naiveComputeSyncCommitteeIndicesElectra } from "../referenceImplementation.js";
 
-/*
 describe("computeProposerIndex", () => {
   it("should compute the same index as reference implementation", async () => {
     const seed = randomBytes(32);
@@ -34,7 +33,6 @@ describe("computeProposerIndex", () => {
     ).to.be.eq(computeProposerIndex(ForkSeq.electra, effectiveBalanceIncrements, activeIndices, seed));
   });
 });
-*/
 
 describe("getNextSyncCommitteeIndices", () => {
   it("should compute the same index as reference implementation", async () => {

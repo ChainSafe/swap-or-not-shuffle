@@ -1,6 +1,7 @@
 import {describe, bench} from "@chainsafe/benchmark";
 import {unshuffleList, SHUFFLE_ROUNDS_MINIMAL, asyncUnshuffleList} from "../../index.js";
-import * as referenceImplementation from "../referenceImplementation.js";
+import {unshuffleList as naiveUnshuffleList} from "../referenceImplementation.js";
+// import * as p from "@lodestar/params";
 
 //          Lightouse  Lodestar
 // 512      254.04 us  1.6034 ms (x6)
@@ -21,7 +22,7 @@ for (const listSize of [
     bench<Uint32Array, Uint32Array>({
       id: `JS   - unshuffleList - ${listSize} indices`,
       fn: () => {
-        referenceImplementation.unshuffleList(indices, seed, SHUFFLE_ROUNDS_MINIMAL);
+        naiveUnshuffleList(indices, seed, SHUFFLE_ROUNDS_MINIMAL);
       },
     });
 

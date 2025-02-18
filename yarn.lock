@@ -599,6 +599,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@chainsafe/swap-or-not-shuffle-darwin-x64@npm:0.0.2":
+  version: 0.0.2
+  resolution: "@chainsafe/swap-or-not-shuffle-darwin-x64@npm:0.0.2"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@chainsafe/swap-or-not-shuffle-linux-arm64-gnu@npm:0.0.2":
   version: 0.0.2
   resolution: "@chainsafe/swap-or-not-shuffle-linux-arm64-gnu@npm:0.0.2"
@@ -610,6 +617,13 @@ __metadata:
   version: 0.0.2
   resolution: "@chainsafe/swap-or-not-shuffle-linux-arm64-musl@npm:0.0.2"
   conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@chainsafe/swap-or-not-shuffle-linux-x64-gnu@npm:0.0.2":
+  version: 0.0.2
+  resolution: "@chainsafe/swap-or-not-shuffle-linux-x64-gnu@npm:0.0.2"
+  conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
@@ -627,7 +641,47 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainsafe/swap-or-not-shuffle@npm:^0.0.2, @chainsafe/swap-or-not-shuffle@workspace:.":
+"@chainsafe/swap-or-not-shuffle-win32-x64-msvc@npm:0.0.2":
+  version: 0.0.2
+  resolution: "@chainsafe/swap-or-not-shuffle-win32-x64-msvc@npm:0.0.2"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@chainsafe/swap-or-not-shuffle@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "@chainsafe/swap-or-not-shuffle@npm:0.0.2"
+  dependencies:
+    "@chainsafe/swap-or-not-shuffle-darwin-arm64": "npm:0.0.2"
+    "@chainsafe/swap-or-not-shuffle-darwin-x64": "npm:0.0.2"
+    "@chainsafe/swap-or-not-shuffle-linux-arm64-gnu": "npm:0.0.2"
+    "@chainsafe/swap-or-not-shuffle-linux-arm64-musl": "npm:0.0.2"
+    "@chainsafe/swap-or-not-shuffle-linux-x64-gnu": "npm:0.0.2"
+    "@chainsafe/swap-or-not-shuffle-linux-x64-musl": "npm:0.0.2"
+    "@chainsafe/swap-or-not-shuffle-win32-arm64-msvc": "npm:0.0.2"
+    "@chainsafe/swap-or-not-shuffle-win32-x64-msvc": "npm:0.0.2"
+  dependenciesMeta:
+    "@chainsafe/swap-or-not-shuffle-darwin-arm64":
+      optional: true
+    "@chainsafe/swap-or-not-shuffle-darwin-x64":
+      optional: true
+    "@chainsafe/swap-or-not-shuffle-linux-arm64-gnu":
+      optional: true
+    "@chainsafe/swap-or-not-shuffle-linux-arm64-musl":
+      optional: true
+    "@chainsafe/swap-or-not-shuffle-linux-x64-gnu":
+      optional: true
+    "@chainsafe/swap-or-not-shuffle-linux-x64-musl":
+      optional: true
+    "@chainsafe/swap-or-not-shuffle-win32-arm64-msvc":
+      optional: true
+    "@chainsafe/swap-or-not-shuffle-win32-x64-msvc":
+      optional: true
+  checksum: 10c0/7a60ed37c379b1228e58109f25092ef367e6d3be1395a3a6d4cff1183eeac9480d503b415d69c30c470a9f3283858ab5b16eb1e734bf470a90ee9b0c29e6ae37
+  languageName: node
+  linkType: hard
+
+"@chainsafe/swap-or-not-shuffle@workspace:.":
   version: 0.0.0-use.local
   resolution: "@chainsafe/swap-or-not-shuffle@workspace:."
   dependencies:

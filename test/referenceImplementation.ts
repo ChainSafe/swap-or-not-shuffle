@@ -245,7 +245,6 @@ function innerShuffleList(input: Shuffleable, seed: Uint8Array, rounds: number, 
 }
 
 /// sync committee computation from lodestar, tweaked to avoid beacon state param
-
 export function naiveComputeSyncCommitteeIndicesElectra(
   seed: Uint8Array,
   activeValidatorIndices: ArrayLike<number>,
