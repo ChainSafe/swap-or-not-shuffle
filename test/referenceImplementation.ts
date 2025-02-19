@@ -1,8 +1,8 @@
 import {digest} from "@chainsafe/as-sha256";
-import { EFFECTIVE_BALANCE_INCREMENT, MAX_EFFECTIVE_BALANCE_ELECTRA, SYNC_COMMITTEE_SIZE } from "@lodestar/params";
-import { computeShuffledIndex } from "@lodestar/state-transition";
-import { bytesToInt, intToBytes } from "@lodestar/utils";
-import {toBigIntLE, toBigIntBE} from "bigint-buffer";
+import {EFFECTIVE_BALANCE_INCREMENT, MAX_EFFECTIVE_BALANCE_ELECTRA, SYNC_COMMITTEE_SIZE} from "@lodestar/params";
+import {computeShuffledIndex} from "@lodestar/state-transition";
+import {bytesToInt, intToBytes} from "@lodestar/utils";
+import {toBigIntBE, toBigIntLE} from "bigint-buffer";
 
 // ArrayLike<number> but with settable indices
 type Shuffleable = {
@@ -246,31 +246,31 @@ function innerShuffleList(input: Shuffleable, seed: Uint8Array, rounds: number, 
 
 /// sync committee computation from lodestar, tweaked to avoid beacon state param
 export function naiveComputeSyncCommitteeIndicesElectra(
-	seed: Uint8Array,
-	activeValidatorIndices: ArrayLike<number>,
-	effectiveBalanceIncrements: Uint16Array
+  seed: Uint8Array,
+  activeValidatorIndices: ArrayLike<number>,
+  effectiveBalanceIncrements: Uint16Array
 ): number[] {
-	const syncCommitteeIndices = [];
-	const MAX_RANDOM_VALUE = 2 ** 16 - 1;
-	const MAX_EFFECTIVE_BALANCE_INCREMENT = MAX_EFFECTIVE_BALANCE_ELECTRA / EFFECTIVE_BALANCE_INCREMENT;
+  const syncCommitteeIndices = [];
+  const MAX_RANDOM_VALUE = 2 ** 16 - 1;
+  const MAX_EFFECTIVE_BALANCE_INCREMENT = MAX_EFFECTIVE_BALANCE_ELECTRA / EFFECTIVE_BALANCE_INCREMENT;
 
-	const activeValidatorCount = activeValidatorIndices.length;
+  const activeValidatorCount = activeValidatorIndices.length;
 
-	let i = 0;
-	while (syncCommitteeIndices.length < SYNC_COMMITTEE_SIZE) {
-		const shuffledIndex = computeShuffledIndex(i % activeValidatorCount, activeValidatorCount, seed);
-		const candidateIndex = activeValidatorIndices[shuffledIndex];
-		const randomBytes = digest(Buffer.concat([seed, intToBytes(Math.floor(i / 16), 8, "le")]));
-		const offset = (i % 16) * 2;
-		const randomValue = bytesToInt(randomBytes.subarray(offset, offset + 2));
+  let i = 0;
+  while (syncCommitteeIndices.length < SYNC_COMMITTEE_SIZE) {
+    const shuffledIndex = computeShuffledIndex(i % activeValidatorCount, activeValidatorCount, seed);
+    const candidateIndex = activeValidatorIndices[shuffledIndex];
+    const randomBytes = digest(Buffer.concat([seed, intToBytes(Math.floor(i / 16), 8, "le")]));
+    const offset = (i % 16) * 2;
+    const randomValue = bytesToInt(randomBytes.subarray(offset, offset + 2));
 
-		const effectiveBalanceIncrement = effectiveBalanceIncrements[candidateIndex];
-		if (effectiveBalanceIncrement * MAX_RANDOM_VALUE >= MAX_EFFECTIVE_BALANCE_INCREMENT * randomValue) {
-			syncCommitteeIndices.push(candidateIndex);
-		}
+    const effectiveBalanceIncrement = effectiveBalanceIncrements[candidateIndex];
+    if (effectiveBalanceIncrement * MAX_RANDOM_VALUE >= MAX_EFFECTIVE_BALANCE_INCREMENT * randomValue) {
+      syncCommitteeIndices.push(candidateIndex);
+    }
 
-		i += 1;
-	}
+    i += 1;
+  }
 
-	return syncCommitteeIndices;
+  return syncCommitteeIndices;
 }
