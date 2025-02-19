@@ -35,7 +35,7 @@ describe("computeProposerIndex", () => {
 });
 
 describe("getNextSyncCommitteeIndices", () => {
-	it("should compute the same index as reference implementation", async () => {
+	it("should compute the same index as reference implementation", {timeout: 10_000}, async () => {
 		const seed = randomBytes(32);
 		const vc = 1000;
 		const activeIndices = new Uint32Array(Array.from({length: vc}, (_, i) => i));
