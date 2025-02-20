@@ -23,9 +23,9 @@ describe("computeProposerIndex", () => {
     }
     expect(
       computeProposerIndexElectra(
-        effectiveBalanceIncrements,
-        activeIndices,
         seed,
+        activeIndices,
+        effectiveBalanceIncrements,
         MAX_EFFECTIVE_BALANCE_ELECTRA,
         EFFECTIVE_BALANCE_INCREMENT,
         SHUFFLE_ROUND_COUNT
@@ -46,10 +46,10 @@ describe("getNextSyncCommitteeIndices", () => {
     expect(
       new Array(
         ...computeSyncCommitteeIndicesElectra(
-          SYNC_COMMITTEE_SIZE,
           seed,
           activeIndices,
           effectiveBalanceIncrements,
+          SYNC_COMMITTEE_SIZE,
           MAX_EFFECTIVE_BALANCE_ELECTRA,
           EFFECTIVE_BALANCE_INCREMENT,
           SHUFFLE_ROUND_COUNT

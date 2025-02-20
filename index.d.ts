@@ -9,9 +9,9 @@ export declare function asyncShuffleList(activeIndices: Uint32Array, seed: Uint8
 
 export declare function asyncUnshuffleList(activeIndices: Uint32Array, seed: Uint8Array, rounds: number): Promise<Uint32Array>
 
-export declare function computeProposerIndexElectra(effectiveBalanceIncrements: Uint16Array, activeIndices: Uint32Array, seed: Uint8Array, maxEffectiveBalanceElectra: number, effectiveBalanceIncrement: number, rounds: number): number
+export declare function computeProposerIndexElectra(seed: Uint8Array, activeIndices: Uint32Array, effectiveBalanceIncrements: Uint16Array, maxEffectiveBalanceElectra: number, effectiveBalanceIncrement: number, rounds: number): number
 
-export declare function computeSyncCommitteeIndicesElectra(syncCommitteeSize: number, seed: Uint8Array, activeIndices: Uint32Array, effectiveBalanceIncrements: Uint16Array, maxEffectiveBalanceElectra: number, effectiveBalanceIncrement: number, rounds: number): Uint32Array
+export declare function computeSyncCommitteeIndicesElectra(seed: Uint8Array, activeIndices: Uint32Array, effectiveBalanceIncrements: Uint16Array, syncCommitteeSize: number, maxEffectiveBalanceElectra: number, effectiveBalanceIncrement: number, rounds: number): Uint32Array
 
 export const SHUFFLE_ROUNDS_MAINNET: number
 

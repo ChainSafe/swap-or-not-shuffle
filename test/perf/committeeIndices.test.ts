@@ -35,10 +35,10 @@ describe("computeIndices", () => {
       id: `RS   - computeSyncCommitteeIndices - ${listSize} indices`,
       fn: () => {
         computeSyncCommitteeIndicesElectra(
-          SYNC_COMMITTEE_SIZE,
           seed,
           activeIndices,
           effectiveBalanceIncrements,
+          SYNC_COMMITTEE_SIZE,
           MAX_EFFECTIVE_BALANCE_ELECTRA,
           EFFECTIVE_BALANCE_INCREMENT,
           SHUFFLE_ROUND_COUNT

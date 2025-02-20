@@ -386,9 +386,9 @@ impl ComputeShuffledIndex {
 
 #[napi]
 pub fn compute_proposer_index_electra(
-  effective_balance_increments: &[u16],
-  active_indices: &[u32],
   seed: &[u8],
+  active_indices: &[u32],
+  effective_balance_increments: &[u16],
   max_effective_balance_electra: i64,
   effective_balance_increment: i64,
   rounds: u32,
@@ -406,10 +406,10 @@ pub fn compute_proposer_index_electra(
 
 #[napi]
 pub fn compute_sync_committee_indices_electra(
-  sync_committee_size: u32,
   seed: &[u8],
   active_indices: &[u32],
   effective_balance_increments: &[u16],
+  sync_committee_size: u32,
   max_effective_balance_electra: i64,
   effective_balance_increment: i64,
   rounds: u32,
