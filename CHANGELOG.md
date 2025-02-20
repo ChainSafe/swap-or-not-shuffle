@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/ChainSafe/swap-or-not-shuffle/compare/v1.0.0...v1.1.0) (2025-02-20)
+
+
+### Features
+
+* add compute shuffled index ([#5](https://github.com/ChainSafe/swap-or-not-shuffle/issues/5)) ([d172a59](https://github.com/ChainSafe/swap-or-not-shuffle/commit/d172a595206d6b563e70cfe005d18dd6f8dfa259))
+
 ## [1.0.0](https://github.com/ChainSafe/swap-or-not-shuffle/compare/v0.0.2...v1.0.0) (2025-02-17)
 
 
