@@ -393,11 +393,34 @@ pub fn compute_proposer_index_electra(
   effective_balance_increment: i64,
   rounds: u32,
 ) -> u32 {
-  get_committee_indices_electra(
+  get_committee_indices(
     1,
     seed,
     active_indices,
     effective_balance_increments,
+    ByteCount::Two,
+    max_effective_balance_electra,
+    effective_balance_increment,
+    rounds,
+  )[0]
+}
+
+#[napi]
+pub fn compute_proposer_index(
+  seed: &[u8],
+  active_indices: &[u32],
+  effective_balance_increments: &[u16],
+  rand_byte_count: ByteCount,
+  max_effective_balance_electra: i64,
+  effective_balance_increment: i64,
+  rounds: u32,
+) -> u32 {
+  get_committee_indices(
+    1,
+    seed,
+    active_indices,
+    effective_balance_increments,
+    rand_byte_count,
     max_effective_balance_electra,
     effective_balance_increment,
     rounds,
@@ -414,11 +437,12 @@ pub fn compute_sync_committee_indices_electra(
   effective_balance_increment: i64,
   rounds: u32,
 ) -> Uint32Array {
-  get_committee_indices_electra(
+  get_committee_indices(
     sync_committee_size,
     seed,
     active_indices,
     effective_balance_increments,
+    ByteCount::Two,
     max_effective_balance_electra,
     effective_balance_increment,
     rounds,
@@ -426,18 +450,53 @@ pub fn compute_sync_committee_indices_electra(
   .into()
 }
 
-pub fn get_committee_indices_electra(
+#[napi]
+pub fn compute_sync_committee_indices(
+  seed: &[u8],
+  active_indices: &[u32],
+  effective_balance_increments: &[u16],
+  rand_byte_count: ByteCount,
+  sync_committee_size: u32,
+  max_effective_balance_electra: i64,
+  effective_balance_increment: i64,
+  rounds: u32,
+) -> Uint32Array {
+  get_committee_indices(
+    sync_committee_size,
+    seed,
+    active_indices,
+    effective_balance_increments,
+    rand_byte_count,
+    max_effective_balance_electra,
+    effective_balance_increment,
+    rounds,
+  )
+  .into()
+}
+
+/// Pre-electra, byte count for random value is 1, post-electra, byte count for random value is 2
+#[napi]
+pub enum ByteCount {
+  One = 1,
+  Two = 2,
+}
+
+pub fn get_committee_indices(
   committee_size: u32,
   seed: &[u8],
   active_indices: &[u32],
   effective_balance_increments: &[u16],
-  max_effective_balance_electra: i64,
+  rand_byte_count: ByteCount,
+  max_effective_balance: i64,
   effective_balance_increment: i64,
   rounds: u32,
 ) -> Vec<u32> {
   let mut committee_indices = Vec::with_capacity(committee_size as usize);
-  let max_random_value = 0xffff;
-  let max_effective_balance_increment = max_effective_balance_electra / effective_balance_increment;
+  let max_random_value = match rand_byte_count {
+    ByteCount::One => 0xff,
+    ByteCount::Two => 0xffff,
+  };
+  let max_effective_balance_increment = max_effective_balance / effective_balance_increment;
 
   let mut compute_shuffled_index =
     ComputeShuffledIndex::new(seed, active_indices.len() as u32, rounds);
@@ -461,9 +520,16 @@ pub fn get_committee_indices_electra(
     }
 
     let random_bytes = cached_hash;
-    let offset = ((i % 16) * 2) as usize;
-    let random_value =
-      u16::from_le_bytes(random_bytes[offset..(offset + 2)].try_into().unwrap()) as i64;
+    let random_value = match rand_byte_count {
+      ByteCount::One => {
+        let offset = (i % 32) as usize;
+        u8::from_le_bytes(random_bytes[offset..(offset + 1)].try_into().unwrap()) as i64
+      },
+      ByteCount::Two => {
+        let offset = ((i % 16) * 2) as usize;
+        u16::from_le_bytes(random_bytes[offset..(offset + 2)].try_into().unwrap()) as i64
+      },
+    };
 
     let effective_balance_increment = effective_balance_increments[candidate_index as usize] as i64;
 
