@@ -1,7 +1,7 @@
 import {randomBytes} from "node:crypto";
 import {expect, describe, it} from "vitest";
-import * as referenceImplementation from "../referenceImplementation";
-import {shuffleList, asyncShuffleList, unshuffleList, asyncUnshuffleList} from "../../index";
+import * as referenceImplementation from "../referenceImplementation.js";
+import {shuffleList, asyncShuffleList, unshuffleList, asyncUnshuffleList} from "../../index.js";
 
 interface ShuffleTestCase {
   id: string;

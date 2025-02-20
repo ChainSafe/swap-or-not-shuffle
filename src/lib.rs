@@ -1,6 +1,6 @@
 #![deny(clippy::all)]
 
-use std::mem;
+use std::{cmp::max, collections::HashMap, mem};
 
 use napi::{
   bindgen_prelude::{AsyncTask, Result, Uint32Array, Uint8Array},
@@ -115,12 +115,11 @@ impl ShufflingManager {
 ///  - `list_size > 2**24`
 ///  - `list_size > usize::MAX / 2`
 fn inner_shuffle_list(
-  input: &Uint32Array,
+  mut input: Vec<u32>,
   seed: &[u8],
   rounds: i32,
   forwards: bool,
 ) -> Result<Vec<u32>> {
-  let mut input = input.to_vec();
   if rounds == 0 {
     // no shuffling rounds
     return Ok(input);
@@ -233,7 +232,7 @@ pub fn shuffle_list(
   rounds: i32,
 ) -> Result<Uint32Array> {
   Ok(Uint32Array::new(inner_shuffle_list(
-    &active_indices,
+    active_indices.to_vec(),
     &seed,
     rounds,
     true,
@@ -247,7 +246,7 @@ pub fn unshuffle_list(
   rounds: i32,
 ) -> Result<Uint32Array> {
   Ok(Uint32Array::new(inner_shuffle_list(
-    &active_indices,
+    active_indices.to_vec(),
     &seed,
     rounds,
     false,
@@ -268,7 +267,7 @@ impl Task for AsyncInnerShuffle {
 
   fn compute(&mut self) -> Result<Self::Output> {
     Ok(inner_shuffle_list(
-      &self.input,
+      self.input.to_vec(),
       &self.seed,
       self.rounds,
       self.forwards,
@@ -306,4 +305,175 @@ pub fn async_unshuffle_list(
     rounds,
     forwards: false,
   })
+}
+
+#[napi]
+pub struct ComputeShuffledIndex {
+  /// There are possibly SHUFFLE_ROUND_COUNT (90) values for this cache
+  /// This cache will always hit after the 1st call
+  pivot_by_index: HashMap<u32, u32>,
+  /// Given 2M active validators, there are 2M / 256 = 8k possible position_div
+  /// It means there are at most 8k different sources for each round
+  source_by_position_by_index: HashMap<u32, HashMap<u32, [u8; 32]>>,
+  /// 32 bytes seed + 1 byte i
+  pivot_buffer: [u8; 32 + 1],
+  /// 32 bytes seed + 1 byte i + 4 bytes position_div
+  source_buffer: [u8; 32 + 1 + 4],
+  /// validator count
+  index_count: u32,
+  /// rounds
+  rounds: u32,
+}
+
+fn digest_as_u64(input: &[u8]) -> u64 {
+  u64::from_le_bytes(hash_fixed(input)[0..8].try_into().unwrap())
+}
+
+#[napi]
+impl ComputeShuffledIndex {
+  #[napi(constructor)]
+  pub fn new(seed: &[u8], index_count: u32, rounds: u32) -> Self {
+    // copy seed into the front of pivot_buffer and source_buffer
+    let mut pivot_buffer = [0u8; 32 + 1];
+    pivot_buffer[0..32].copy_from_slice(seed);
+    let mut source_buffer = [0u8; 32 + 1 + 4];
+    source_buffer[0..32].copy_from_slice(seed);
+    Self {
+      pivot_by_index: HashMap::new(),
+      source_by_position_by_index: HashMap::new(),
+      pivot_buffer,
+      source_buffer,
+      index_count,
+      rounds,
+    }
+  }
+
+  #[napi]
+  pub fn get(&mut self, index: u32) -> u32 {
+    let mut permuted = index;
+
+    for i in 0..self.rounds {
+      let pivot = *self.pivot_by_index.entry(i).or_insert_with(|| {
+        self.pivot_buffer[32] = (i % 256) as u8;
+        (digest_as_u64(self.pivot_buffer.as_ref()) % self.index_count as u64)
+          .try_into()
+          .unwrap()
+      });
+
+      let flip = (pivot + self.index_count - permuted) % self.index_count;
+      let position = max(permuted, flip);
+
+      let position_div = position / 256;
+      let source = self
+        .source_by_position_by_index
+        .entry(i)
+        .or_insert(HashMap::new())
+        .entry(position_div)
+        .or_insert_with(|| {
+          self.source_buffer[32] = (i % 256) as u8;
+          self.source_buffer[33..37].copy_from_slice(&position_div.to_le_bytes());
+          hash_fixed(self.source_buffer.as_ref())
+        });
+
+      let byte = source[(position % 256 / 8) as usize];
+      let bit = (byte >> (position % 8)) & 1;
+      permuted = if bit == 1 { flip } else { permuted };
+    }
+
+    permuted
+  }
+}
+
+#[napi]
+pub fn compute_proposer_index_electra(
+  seed: &[u8],
+  active_indices: &[u32],
+  effective_balance_increments: &[u16],
+  max_effective_balance_electra: i64,
+  effective_balance_increment: i64,
+  rounds: u32,
+) -> u32 {
+  get_committee_indices_electra(
+    1,
+    seed,
+    active_indices,
+    effective_balance_increments,
+    max_effective_balance_electra,
+    effective_balance_increment,
+    rounds,
+  )[0]
+}
+
+#[napi]
+pub fn compute_sync_committee_indices_electra(
+  seed: &[u8],
+  active_indices: &[u32],
+  effective_balance_increments: &[u16],
+  sync_committee_size: u32,
+  max_effective_balance_electra: i64,
+  effective_balance_increment: i64,
+  rounds: u32,
+) -> Uint32Array {
+  get_committee_indices_electra(
+    sync_committee_size,
+    seed,
+    active_indices,
+    effective_balance_increments,
+    max_effective_balance_electra,
+    effective_balance_increment,
+    rounds,
+  )
+  .into()
+}
+
+pub fn get_committee_indices_electra(
+  committee_size: u32,
+  seed: &[u8],
+  active_indices: &[u32],
+  effective_balance_increments: &[u16],
+  max_effective_balance_electra: i64,
+  effective_balance_increment: i64,
+  rounds: u32,
+) -> Vec<u32> {
+  let mut committee_indices = Vec::with_capacity(committee_size as usize);
+  let max_random_value = 0xffff;
+  let max_effective_balance_increment = max_effective_balance_electra / effective_balance_increment;
+
+  let mut compute_shuffled_index =
+    ComputeShuffledIndex::new(seed, active_indices.len() as u32, rounds);
+  let mut shuffled_result = HashMap::new();
+
+  let mut i: u32 = 0;
+  let mut cached_hash_input = [0u8; 32 + 8];
+  cached_hash_input[0..32].copy_from_slice(seed);
+  let mut cached_hash = [0u8; 32];
+
+  while (committee_indices.len() as u32) < committee_size {
+    let index = i % active_indices.len() as u32;
+    let shuffled_index = *shuffled_result
+      .entry(index)
+      .or_insert_with(|| compute_shuffled_index.get(index));
+    let candidate_index = active_indices[shuffled_index as usize];
+
+    if i % 16 == 0 {
+      cached_hash_input[32..36].copy_from_slice(&(i / 16).to_le_bytes());
+      cached_hash = hash_fixed(&cached_hash_input);
+    }
+
+    let random_bytes = cached_hash;
+    let offset = ((i % 16) * 2) as usize;
+    let random_value =
+      u16::from_le_bytes(random_bytes[offset..(offset + 2)].try_into().unwrap()) as i64;
+
+    let effective_balance_increment = effective_balance_increments[candidate_index as usize] as i64;
+
+    if effective_balance_increment * max_random_value
+      >= max_effective_balance_increment * random_value
+    {
+      committee_indices.push(candidate_index);
+    }
+
+    i += 1;
+  }
+  committee_indices
 }
