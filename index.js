@@ -365,11 +365,14 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { ComputeShuffledIndex, asyncShuffleList, asyncUnshuffleList, computeProposerIndexElectra, computeSyncCommitteeIndicesElectra, SHUFFLE_ROUNDS_MAINNET, SHUFFLE_ROUNDS_MINIMAL, shuffleList, unshuffleList } = nativeBinding
+const { ComputeShuffledIndex, asyncShuffleList, asyncUnshuffleList, ByteCount, computeProposerIndex, computeProposerIndexElectra, computeSyncCommitteeIndices, computeSyncCommitteeIndicesElectra, SHUFFLE_ROUNDS_MAINNET, SHUFFLE_ROUNDS_MINIMAL, shuffleList, unshuffleList } = nativeBinding
 export { ComputeShuffledIndex }
 export { asyncShuffleList }
 export { asyncUnshuffleList }
+export { ByteCount }
+export { computeProposerIndex }
 export { computeProposerIndexElectra }
+export { computeSyncCommitteeIndices }
 export { computeSyncCommitteeIndicesElectra }
 export { SHUFFLE_ROUNDS_MAINNET }
 export { SHUFFLE_ROUNDS_MINIMAL }
