@@ -514,8 +514,12 @@ pub fn get_committee_indices(
       .or_insert_with(|| compute_shuffled_index.get(index));
     let candidate_index = active_indices[shuffled_index as usize];
 
-    if i % 16 == 0 {
-      cached_hash_input[32..36].copy_from_slice(&(i / 16).to_le_bytes());
+    let hash_increment = match rand_byte_count {
+      ByteCount::One => 32,
+      ByteCount::Two => 16,
+    };
+    if i % hash_increment == 0 {
+      cached_hash_input[32..36].copy_from_slice(&(i / hash_increment).to_le_bytes());
       cached_hash = hash_fixed(&cached_hash_input);
     }
 
