@@ -1,6 +1,6 @@
 {
   "name": "@chainsafe/swap-or-not-shuffle",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "scripts": {
     "artifacts": "napi artifacts",
     "build": "napi build --platform --release --strip --esm",

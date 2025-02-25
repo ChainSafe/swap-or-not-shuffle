@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/ChainSafe/swap-or-not-shuffle/compare/v1.2.0...v1.2.1) (2025-02-25)
+
+
+### Bug Fixes
+
+* pre-electra shuffling bug ([#16](https://github.com/ChainSafe/swap-or-not-shuffle/issues/16)) ([29133d2](https://github.com/ChainSafe/swap-or-not-shuffle/commit/29133d282e03c80d3886a4facf6b6228673b7534))
+
 ## [1.2.0](https://github.com/ChainSafe/swap-or-not-shuffle/compare/v1.1.0...v1.2.0) (2025-02-24)
 
 
