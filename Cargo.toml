@@ -12,6 +12,7 @@ napi = { version = "3.0.0-alpha.28", default-features = false, features = ["napi
 napi-derive = "3.0.0-alpha.26"
 ethereum_hashing = "0.7.0"
 ethereum-types = "0.15.1"
+rayon = "1.10"
 # included to satisfy CI
 ctor = "0.3.3"
 

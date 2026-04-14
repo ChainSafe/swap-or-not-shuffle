@@ -547,3 +547,112 @@ pub fn get_committee_indices(
   }
   committee_indices
 }
+
+fn compute_ptc_indices_inner(
+  seed: &[u8],
+  indices: &[u32],
+  effective_balance_increments: &[u16],
+  ptc_size: usize,
+  max_ebi: i64,
+  result: &mut Vec<u32>,
+) {
+  const MAX_RANDOM_VALUE: i64 = 0xffff;
+  let indices_len = indices.len();
+
+  let mut hash_input = [0u8; 40];
+  hash_input[0..32].copy_from_slice(seed);
+
+  let mut i: usize = 0;
+  'outer: loop {
+    // one SHA-256 per 16 candidates; encode block index in bytes 32-39
+    let block = (i / 16) as u64;
+    hash_input[32..40].copy_from_slice(&block.to_le_bytes());
+    let hash = hash_fixed(&hash_input);
+
+    // consume all 16 u16 random values from this hash block before hashing again
+    for j in 0..16 {
+      let candidate_index = indices[(i + j) % indices_len];
+      let offset = j * 2;
+      let random_value = u16::from_le_bytes(hash[offset..offset + 2].try_into().unwrap()) as i64;
+      let ebi = effective_balance_increments[candidate_index as usize] as i64;
+      // accept if ebi / max_ebi >= random_value / MAX_RANDOM_VALUE (avoiding float division)
+      if ebi * MAX_RANDOM_VALUE >= max_ebi * random_value {
+        result.push(candidate_index);
+        if result.len() == ptc_size {
+          break 'outer;
+        }
+      }
+    }
+    i += 16;
+  }
+}
+
+
+#[napi]
+pub fn compute_ptc_indices(
+  seed: &[u8],
+  indices: &[u32],
+  effective_balance_increments: &[u16],
+  ptc_size: u32,
+  max_effective_balance_electra: i64,
+  effective_balance_increment: i64,
+) -> Uint32Array {
+  let max_ebi = max_effective_balance_electra / effective_balance_increment;
+  let mut result = Vec::with_capacity(ptc_size as usize);
+  compute_ptc_indices_inner(seed, indices, effective_balance_increments, ptc_size as usize, max_ebi, &mut result);
+  Uint32Array::new(result)
+}
+
+#[napi]
+pub fn compute_ptc_indices_for_epoch(
+  epoch_seed: &[u8],
+  start_slot: u32,
+  slots_per_epoch: u32,
+  shuffling: &[u32],
+  slot_offsets: &[u32],
+  effective_balance_increments: &[u16],
+  ptc_size: u32,
+  max_effective_balance_electra: i64,
+  effective_balance_increment: i64,
+) -> Uint32Array {
+  use rayon::prelude::*;
+
+  let max_ebi = max_effective_balance_electra / effective_balance_increment;
+  let slots = slots_per_epoch as usize;
+
+  // derive per-slot seeds in parallel: hash(epoch_seed || slot_u64_le)
+  let slot_seeds: Vec<[u8; 32]> = (0..slots)
+    .into_par_iter()
+    .map(|i| {
+      let mut input = [0u8; 40];
+      input[0..32].copy_from_slice(epoch_seed);
+      let slot = (start_slot as u64) + i as u64;
+      input[32..40].copy_from_slice(&slot.to_le_bytes());
+      hash_fixed(&input)
+    })
+    .collect();
+
+  // run PTC sampling for all slots in parallel; each slot is independent
+  let results: Vec<Vec<u32>> = (0..slots)
+    .into_par_iter()
+    .map(|i| {
+      let start = slot_offsets[i] as usize;
+      let end = slot_offsets[i + 1] as usize;
+      let slot_indices = &shuffling[start..end];
+      let mut slot_result = Vec::with_capacity(ptc_size as usize);
+      compute_ptc_indices_inner(
+        &slot_seeds[i],
+        slot_indices,
+        effective_balance_increments,
+        ptc_size as usize,
+        max_ebi,
+        &mut slot_result,
+      );
+      slot_result
+    })
+    .collect();
+
+  // flatten 32 per-slot vecs into one contiguous output array
+  let flat: Vec<u32> = results.into_iter().flatten().collect();
+  Uint32Array::new(flat)
+}

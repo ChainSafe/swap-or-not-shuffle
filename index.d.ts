@@ -19,6 +19,10 @@ export declare function computeProposerIndex(seed: Uint8Array, activeIndices: Ui
 
 export declare function computeProposerIndexElectra(seed: Uint8Array, activeIndices: Uint32Array, effectiveBalanceIncrements: Uint16Array, maxEffectiveBalanceElectra: number, effectiveBalanceIncrement: number, rounds: number): number
 
+export declare function computePtcIndices(seed: Uint8Array, indices: Uint32Array, effectiveBalanceIncrements: Uint16Array, ptcSize: number, maxEffectiveBalanceElectra: number, effectiveBalanceIncrement: number): Uint32Array
+
+export declare function computePtcIndicesForEpoch(epochSeed: Uint8Array, startSlot: number, slotsPerEpoch: number, shuffling: Uint32Array, slotOffsets: Uint32Array, effectiveBalanceIncrements: Uint16Array, ptcSize: number, maxEffectiveBalanceElectra: number, effectiveBalanceIncrement: number): Uint32Array
+
 export declare function computeSyncCommitteeIndices(seed: Uint8Array, activeIndices: Uint32Array, effectiveBalanceIncrements: Uint16Array, randByteCount: ByteCount, syncCommitteeSize: number, maxEffectiveBalanceElectra: number, effectiveBalanceIncrement: number, rounds: number): Uint32Array
 
 export declare function computeSyncCommitteeIndicesElectra(seed: Uint8Array, activeIndices: Uint32Array, effectiveBalanceIncrements: Uint16Array, syncCommitteeSize: number, maxEffectiveBalanceElectra: number, effectiveBalanceIncrement: number, rounds: number): Uint32Array
