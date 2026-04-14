@@ -1,5 +1,11 @@
 import {digest} from "@chainsafe/as-sha256";
-import {EFFECTIVE_BALANCE_INCREMENT, MAX_EFFECTIVE_BALANCE_ELECTRA, SYNC_COMMITTEE_SIZE} from "@lodestar/params";
+import {
+  EFFECTIVE_BALANCE_INCREMENT,
+  MAX_EFFECTIVE_BALANCE_ELECTRA,
+  PTC_SIZE,
+  SLOTS_PER_EPOCH,
+  SYNC_COMMITTEE_SIZE,
+} from "@lodestar/params";
 import {computeShuffledIndex} from "@lodestar/state-transition";
 import {bytesToInt, intToBytes} from "@lodestar/utils";
 import {toBigIntBE, toBigIntLE} from "bigint-buffer";
@@ -242,6 +248,61 @@ function innerShuffleList(input: Shuffleable, seed: Uint8Array, rounds: number, 
       r -= 1;
     }
   }
+}
+
+/// PTC sampler from lodestar (naiveComputePayloadTimelinessCommitteeIndices)
+export function naiveComputePayloadTimelinessCommitteeIndices(
+  effectiveBalanceIncrements: Uint16Array,
+  indices: ArrayLike<number>,
+  seed: Uint8Array
+): number[] {
+  if (indices.length === 0) {
+    throw Error("Validator indices must not be empty");
+  }
+
+  const result: number[] = [];
+  const MAX_RANDOM_VALUE = 2 ** 16 - 1;
+  const MAX_EFFECTIVE_BALANCE_INCREMENT = MAX_EFFECTIVE_BALANCE_ELECTRA / EFFECTIVE_BALANCE_INCREMENT;
+
+  let i = 0;
+  while (result.length < PTC_SIZE) {
+    const candidateIndex = indices[i % indices.length];
+    const randomBytes = digest(Buffer.concat([seed, intToBytes(Math.floor(i / 16), 8, "le")]));
+    const offset = (i % 16) * 2;
+    const randomValue = bytesToInt(randomBytes.subarray(offset, offset + 2));
+
+    const effectiveBalanceIncrement = effectiveBalanceIncrements[candidateIndex];
+    if (effectiveBalanceIncrement * MAX_RANDOM_VALUE >= MAX_EFFECTIVE_BALANCE_INCREMENT * randomValue) {
+      result.push(candidateIndex);
+    }
+    i += 1;
+  }
+
+  return result;
+}
+
+/// epoch PTC from lodestar (computePayloadTimelinessCommitteesForEpoch), tweaked to avoid beacon state param
+export function naiveComputePayloadTimelinessCommitteesForEpoch(
+  epochSeed: Uint8Array,
+  startSlot: number,
+  committees: Uint32Array[][],
+  effectiveBalanceIncrements: Uint16Array
+): number[][] {
+  const result: number[][] = new Array(SLOTS_PER_EPOCH);
+  for (let i = 0; i < SLOTS_PER_EPOCH; i++) {
+    const slotSeed = digest(Buffer.concat([epochSeed, intToBytes(startSlot + i, 8, "le")]));
+    const slotCommittees = committees[i];
+    let totalLen = 0;
+    for (const c of slotCommittees) totalLen += c.length;
+    const allIndices = new Uint32Array(totalLen);
+    let offset = 0;
+    for (const c of slotCommittees) {
+      allIndices.set(c, offset);
+      offset += c.length;
+    }
+    result[i] = naiveComputePayloadTimelinessCommitteeIndices(effectiveBalanceIncrements, allIndices, slotSeed);
+  }
+  return result;
 }
 
 /// sync committee computation from lodestar, tweaked to avoid beacon state param
