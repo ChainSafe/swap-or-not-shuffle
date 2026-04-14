@@ -1,13 +1,16 @@
 import {randomBytes} from "node:crypto";
 import {bench, describe} from "@chainsafe/benchmark";
-import {EFFECTIVE_BALANCE_INCREMENT, MAX_EFFECTIVE_BALANCE_ELECTRA, SLOTS_PER_EPOCH} from "@lodestar/params";
+import {
+  EFFECTIVE_BALANCE_INCREMENT,
+  MAX_EFFECTIVE_BALANCE_ELECTRA,
+  PTC_SIZE,
+  SLOTS_PER_EPOCH,
+} from "@lodestar/params";
 import {computePtcIndices, computePtcIndicesForEpoch} from "../../index.js";
 import {
   naiveComputePayloadTimelinessCommitteeIndices,
   naiveComputePayloadTimelinessCommitteesForEpoch,
 } from "../referenceImplementation.js";
-
-const PTC_SIZE = 512;
 
 describe("computePtcIndices - per slot", () => {
   for (const vc of [16_384, 250_000, 1_000_000]) {

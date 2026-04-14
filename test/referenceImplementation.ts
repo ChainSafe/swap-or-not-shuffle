@@ -2,14 +2,13 @@ import {digest} from "@chainsafe/as-sha256";
 import {
   EFFECTIVE_BALANCE_INCREMENT,
   MAX_EFFECTIVE_BALANCE_ELECTRA,
+  PTC_SIZE,
   SLOTS_PER_EPOCH,
   SYNC_COMMITTEE_SIZE,
 } from "@lodestar/params";
 import {computeShuffledIndex} from "@lodestar/state-transition";
 import {bytesToInt, intToBytes} from "@lodestar/utils";
 import {toBigIntBE, toBigIntLE} from "bigint-buffer";
-
-const PTC_SIZE = 512;
 
 // ArrayLike<number> but with settable indices
 type Shuffleable = {

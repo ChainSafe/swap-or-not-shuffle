@@ -723,7 +723,7 @@ __metadata:
     "@chainsafe/swap-or-not-shuffle-linux-arm64-musl": "npm:0.0.2"
     "@chainsafe/swap-or-not-shuffle-linux-x64-musl": "npm:0.0.2"
     "@chainsafe/swap-or-not-shuffle-win32-arm64-msvc": "npm:0.0.2"
-    "@lodestar/params": "npm:^1.27.0"
+    "@lodestar/params": "npm:^1.42.0"
     "@lodestar/state-transition": "npm:^1.27.0"
     "@lodestar/utils": "npm:^1.27.0"
     "@napi-rs/cli": "npm:^3.6.1"
@@ -1249,6 +1249,13 @@ __metadata:
   version: 1.27.0
   resolution: "@lodestar/params@npm:1.27.0"
   checksum: 10c0/99e2bfb9b453c28768f6263d06571d3a5e49c618ae6860c38194086b78fde0abcb62d00f7f41dece70f6c9d12a158afa0b020564991c5a9c7cc5f3abfbaae47e
+  languageName: node
+  linkType: hard
+
+"@lodestar/params@npm:^1.42.0":
+  version: 1.42.0
+  resolution: "@lodestar/params@npm:1.42.0"
+  checksum: 10c0/0365789db65cc5281c4f349dd5eeecba448a653f4ca10a3dc64d60bf9ca7a9d9d88fef75f7851add2a4196591f1cdadb3eb4e2b0f03627181020d80f9ad92587
   languageName: node
   linkType: hard
 
