@@ -183,21 +183,16 @@ jobs:
           options: -v ${{ steps.docker.outputs.PNPM_STORE_PATH }}:${{ steps.docker.outputs.PNPM_STORE_PATH }} -v ${{ github.workspace }}:${{ github.workspace }} -w ${{ github.workspace }} --platform ${{ steps.docker.outputs.PLATFORM }}
           run: |
             set -x
-            ARCH=${{ contains(matrix.target, 'aarch64') && 'arm64' || 'x64' }}
             node -e "
-              const m=require('./swap-or-not-shuffle.linux-$ARCH-musl.node');
-              (async()=>{
-                const a=()=>m.asyncShuffleList(new Uint32Array(2000), new Uint8Array(32), 90);
-                await Promise.all([a(),a(),a(),a(),a(),a(),a(),a()]);
-                console.log('async shuffle OK');
-              })().catch(e=>{console.log('async ERR',e); process.exit(1)})
-            " || echo "ASYNC_CRASH"
-            npx vitest --run test/unit/shuffle.test.ts || echo "SHUFFLE_TEST_FAIL"
-            npx vitest --run test/unit/committeeIndices.test.ts || echo "COMMITTEE_TEST_FAIL"
-            apk add --no-cache strace >/dev/null 2>&1 || echo "no strace"
-            strace -f -o /tmp/st.log -e trace=openat npx vitest --run --dir test/unit --pool=threads --no-file-parallelism || echo "VITEST_THREADS_FAIL"
-            grep -n "SIGSEGV\|si_addr" /tmp/st.log | tail -10
-            tail -60 /tmp/st.log
+              const {toBigIntLE, toBigIntBE, toBufferLE} = require('bigint-buffer');
+              console.log(toBigIntLE(Buffer.from([1,2,3,4,5,6,7,8])));
+              console.log(toBigIntBE(Buffer.from([1,2,3,4,5,6,7,8])));
+              console.log(toBufferLE(123456789n, 8));
+              console.log('bigint-buffer CALL OK');
+            " || echo "BIGINT_CALL_CRASH"
+            find node_modules/.pnpm -path "*bigint-buffer/build" -maxdepth 4 | head -2
+            rm -rf node_modules/.pnpm/bigint-buffer@1.1.5/node_modules/bigint-buffer/build
+            npm run test:unit || echo "STILL_FAILING_WITHOUT_BIGINT_NATIVE"
       - name: Test bindings
         uses: addnab/docker-run-action@v3
         with:
