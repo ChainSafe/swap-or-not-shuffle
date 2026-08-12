@@ -175,24 +175,6 @@ jobs:
           platforms: all
       - run: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
         if: ${{ contains(matrix.target, 'armv7') }}
-      # TEMPORARY debug step - remove once musl x64 failure is understood
-      - name: Debug native modules in container
-        uses: addnab/docker-run-action@v3
-        with:
-          image: ${{ steps.docker.outputs.IMAGE }}
-          options: -v ${{ steps.docker.outputs.PNPM_STORE_PATH }}:${{ steps.docker.outputs.PNPM_STORE_PATH }} -v ${{ github.workspace }}:${{ github.workspace }} -w ${{ github.workspace }} --platform ${{ steps.docker.outputs.PLATFORM }}
-          run: |
-            set -x
-            node -e "
-              const {toBigIntLE, toBigIntBE, toBufferLE} = require('bigint-buffer');
-              console.log(toBigIntLE(Buffer.from([1,2,3,4,5,6,7,8])));
-              console.log(toBigIntBE(Buffer.from([1,2,3,4,5,6,7,8])));
-              console.log(toBufferLE(123456789n, 8));
-              console.log('bigint-buffer CALL OK');
-            " || echo "BIGINT_CALL_CRASH"
-            find node_modules/.pnpm -path "*bigint-buffer/build" -maxdepth 4 | head -2
-            rm -rf node_modules/.pnpm/bigint-buffer@1.1.5/node_modules/bigint-buffer/build
-            npm run test:unit || echo "STILL_FAILING_WITHOUT_BIGINT_NATIVE"
       - name: Test bindings
         uses: addnab/docker-run-action@v3
         with:
