@@ -183,14 +183,21 @@ jobs:
           options: -v ${{ steps.docker.outputs.PNPM_STORE_PATH }}:${{ steps.docker.outputs.PNPM_STORE_PATH }} -v ${{ github.workspace }}:${{ github.workspace }} -w ${{ github.workspace }} --platform ${{ steps.docker.outputs.PLATFORM }}
           run: |
             set -x
-            node -v
-            uname -m
-            node -e "const m=require('./swap-or-not-shuffle.linux-${{ contains(matrix.target, 'aarch64') && 'arm64' || 'x64' }}-musl.node'); const out=m.shuffleList(new Uint32Array(100), new Uint8Array(32), 90); console.log('local .node OK', out.length)" || echo "LOCAL_NODE_FAIL"
-            node -e "try{require('bigint-buffer');console.log('bigint-buffer OK')}catch(e){console.log('bigint-buffer LOAD FAIL:', e.message)}" || echo "BIGINT_CRASH"
-            node -e "try{require('@chainsafe/blst');console.log('blst OK')}catch(e){console.log('blst LOAD FAIL:', e.message)}" || echo "BLST_CRASH"
-            node --input-type=module -e "await import('./index.js'); console.log('index.js OK')" || echo "INDEX_FAIL"
-            node --input-type=module -e "await import('@lodestar/state-transition'); console.log('state-transition OK')" || echo "STATE_TRANSITION_FAIL"
-            npx vitest --run --dir test/unit --pool=threads --no-file-parallelism || echo "VITEST_THREADS_FAIL"
+            ARCH=${{ contains(matrix.target, 'aarch64') && 'arm64' || 'x64' }}
+            node -e "
+              const m=require('./swap-or-not-shuffle.linux-$ARCH-musl.node');
+              (async()=>{
+                const a=()=>m.asyncShuffleList(new Uint32Array(2000), new Uint8Array(32), 90);
+                await Promise.all([a(),a(),a(),a(),a(),a(),a(),a()]);
+                console.log('async shuffle OK');
+              })().catch(e=>{console.log('async ERR',e); process.exit(1)})
+            " || echo "ASYNC_CRASH"
+            npx vitest --run test/unit/shuffle.test.ts || echo "SHUFFLE_TEST_FAIL"
+            npx vitest --run test/unit/committeeIndices.test.ts || echo "COMMITTEE_TEST_FAIL"
+            apk add --no-cache strace >/dev/null 2>&1 || echo "no strace"
+            strace -f -o /tmp/st.log -e trace=openat npx vitest --run --dir test/unit --pool=threads --no-file-parallelism || echo "VITEST_THREADS_FAIL"
+            grep -n "SIGSEGV\|si_addr" /tmp/st.log | tail -10
+            tail -60 /tmp/st.log
       - name: Test bindings
         uses: addnab/docker-run-action@v3
         with:
