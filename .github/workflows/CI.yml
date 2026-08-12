@@ -175,6 +175,22 @@ jobs:
           platforms: all
       - run: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
         if: ${{ contains(matrix.target, 'armv7') }}
+      # TEMPORARY debug step - remove once musl x64 failure is understood
+      - name: Debug native modules in container
+        uses: addnab/docker-run-action@v3
+        with:
+          image: ${{ steps.docker.outputs.IMAGE }}
+          options: -v ${{ steps.docker.outputs.PNPM_STORE_PATH }}:${{ steps.docker.outputs.PNPM_STORE_PATH }} -v ${{ github.workspace }}:${{ github.workspace }} -w ${{ github.workspace }} --platform ${{ steps.docker.outputs.PLATFORM }}
+          run: |
+            set -x
+            node -v
+            uname -m
+            node -e "const m=require('./swap-or-not-shuffle.linux-${{ contains(matrix.target, 'aarch64') && 'arm64' || 'x64' }}-musl.node'); const out=m.shuffleList(new Uint32Array(100), new Uint8Array(32), 90); console.log('local .node OK', out.length)" || echo "LOCAL_NODE_FAIL"
+            node -e "try{require('bigint-buffer');console.log('bigint-buffer OK')}catch(e){console.log('bigint-buffer LOAD FAIL:', e.message)}" || echo "BIGINT_CRASH"
+            node -e "try{require('@chainsafe/blst');console.log('blst OK')}catch(e){console.log('blst LOAD FAIL:', e.message)}" || echo "BLST_CRASH"
+            node --input-type=module -e "await import('./index.js'); console.log('index.js OK')" || echo "INDEX_FAIL"
+            node --input-type=module -e "await import('@lodestar/state-transition'); console.log('state-transition OK')" || echo "STATE_TRANSITION_FAIL"
+            npx vitest --run --dir test/unit --pool=threads --no-file-parallelism || echo "VITEST_THREADS_FAIL"
       - name: Test bindings
         uses: addnab/docker-run-action@v3
         with:
