@@ -6,9 +6,9 @@
     "build": "napi build --platform --release --strip --esm",
     "build:debug": "napi build --platform --esm",
     "prepublishOnly": "napi prepublish -t npm",
-    "test": "yarn test:unit && yarn test:perf",
+    "test": "pnpm test:unit && pnpm test:perf",
     "test:unit": "vitest --run --dir test/unit",
-    "test:perf": "yarn test:perf:files test/perf/*.test.ts",
+    "test:perf": "pnpm test:perf:files test/perf/*.test.ts",
     "test:perf:files": "NODE_OPTIONS='--max-old-space-size=4096 --loader=ts-node/esm' benchmark --config .benchrc.yaml --defaultBranch main",
     "lint": "biome check",
     "version": "napi version"
@@ -37,7 +37,7 @@
     "@lodestar/params": "^1.27.0",
     "@lodestar/state-transition": "^1.27.0",
     "@lodestar/utils": "^1.27.0",
-    "@napi-rs/cli": "^3.0.0-alpha.70",
+    "@napi-rs/cli": "^3.5.0",
     "@types/node": "^22.13.2",
     "bigint-buffer": "^1.1.5",
     "prettier": "^3.3.2",
@@ -69,7 +69,7 @@
     "type": "git",
     "url": "https://github.com/ChainSafe/swap-or-not-shuffle"
   },
-  "packageManager": "yarn@4.6.0",
+  "packageManager": "pnpm@10.23.0",
   "optionalDependencies": {
     "@chainsafe/swap-or-not-shuffle-darwin-arm64": "0.0.2",
     "@chainsafe/swap-or-not-shuffle-linux-arm64-gnu": "0.0.2",
